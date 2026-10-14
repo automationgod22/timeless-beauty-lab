@@ -87,7 +87,9 @@ export function initBooking() {
       b.textContent = t.name;
       summary.append(b, document.createTextNode(`${t.detail ? ` · ${t.detail}` : ''}`), document.createElement('br'), document.createTextNode(`${checked('day') || 'Any day'}, ${(checked('time') || 'Any time').toLowerCase()}`));
     }
-    preview.textContent = message();
+    const text = message();
+    preview.textContent = text;
+    syncLinks(text);
   };
 
   const valid = (i: number) => {
@@ -112,26 +114,32 @@ export function initBooking() {
     }
   };
 
-  const send = (how: string) => {
-    if (!valid(2)) return;
-    const text = message();
-    if (how === 'wa') window.open(`https://wa.me/${data.whatsapp}?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
-    else if (how === 'sms') location.href = `sms:${data.phone}?&body=${encodeURIComponent(text)}`;
-    else if (how === 'ig') {
-      const copied = copyText(text);
-      window.open(data.ig, '_blank', 'noopener');
-      toast(copied ? 'Message copied. Paste it into the Instagram chat.' : 'Opening Instagram. Copy your message from this page.');
-    }
+  // The send controls are real links (they work with pop-up blockers); their addresses follow the form.
+  const links = {
+    wa: form.querySelector<HTMLAnchorElement>('#send-wa'),
+    sms: form.querySelector<HTMLAnchorElement>('#send-sms'),
+  };
+  const syncLinks = (text: string) => {
+    const enc = encodeURIComponent(text);
+    if (links.wa) links.wa.href = `https://wa.me/${data.whatsapp}?text=${enc}`;
+    if (links.sms) links.sms.href = `sms:${data.phone}?&body=${enc}`;
   };
 
   form.addEventListener('click', (e) => {
     const t = e.target as HTMLElement;
     const pick = t.closest<HTMLElement>('[data-pick]');
-    const sendBtn = t.closest<HTMLElement>('[data-send]');
+    const sendLink = t.closest<HTMLElement>('[data-send]');
     if (t.closest('[data-next]')) { if (valid(cur)) go(cur + 1); }
     else if (t.closest('[data-prev]')) go(cur - 1);
     else if (pick) { sel.value = pick.dataset.pick!; valid(0); update(); }
-    else if (sendBtn) send(sendBtn.dataset.send!);
+    else if (sendLink) {
+      if (!valid(2)) { e.preventDefault(); return; }
+      update();
+      if (sendLink.dataset.send === 'ig') {
+        const copied = copyText(message());
+        toast(copied ? 'Message copied. Paste it into the Instagram chat.' : 'Copy your message from this page, then paste it into the chat.');
+      }
+    }
   });
   form.addEventListener('submit', (e) => e.preventDefault());
   const clearErrors = () => {

@@ -120,9 +120,9 @@ const times = ['Morning', 'Afternoon', 'Evening', 'Any time'];
             <p class="lab">Your message</p>
             <div class="msg" id="b-msg"></div>
             <div class="btns">
-              <button type="button" class="btn btn-primary" data-send="wa"><Icon name="chat" /><span>Send on WhatsApp</span></button>
-              <button type="button" class="btn btn-ghost" data-send="ig"><Icon name="ig" /><span>Instagram DM</span></button>
-              <button type="button" class="link" data-send="sms"><Icon name="phone" /><span>Send as a text</span></button>
+              <a class="btn btn-primary" id="send-wa" href={waLink("Hi! I'd like to book an appointment at Timeless Beauty Lab.")} target="_blank" rel="noopener" data-send="wa"><Icon name="chat" /><span>Send on WhatsApp</span></a>
+              <a class="btn btn-ghost" id="send-ig" href={SITE.instagramDM} target="_blank" rel="noopener" data-send="ig"><Icon name="ig" /><span>Copy and open Instagram</span></a>
+              <a class="link" id="send-sms" href={`sms:${SITE.phone}`} data-send="sms"><Icon name="phone" /><span>Send as a text</span></a>
             </div>
             <p class="note mt-s">Nothing is booked until Tatiana confirms your time. Your details are only shared in the message you choose to send.</p>
             <div class="bnav mt-s"><button type="button" class="link" data-prev><Icon name="arrowL" /><span>Back</span></button><span></span></div>

@@ -1,0 +1,31 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import { SITE } from '../data/site';
+
+const crumbs: [string, string][] = [['Home', '/'], ['Privacy', '/privacy/']];
+const updated = 'October 2026';
+---
+<Base title="Privacy Policy | Timeless Beauty Lab" description="How Timeless Beauty Lab in Jersey City handles your information when you visit the website, take the skin quiz or send a booking request.">
+  <PageHero crumbs={crumbs} eyebrow="Privacy" title="Privacy policy" lede={`Last updated ${updated}. In short: this website does not collect or store your personal information.`} />
+  <section class="sec">
+    <div class="wrap">
+      <div class="prose">
+        <h2>What this website collects</h2>
+        <p>This website has no user accounts, no newsletter sign-up and no advertising trackers. It does not store the details you type into the booking form or the answers you give in the skin quiz on any server.</p>
+        <h2>Booking requests</h2>
+        <p>When you send a booking request, the website prepares a message on your device. You choose whether to send it through WhatsApp, Instagram or a text message, and it is then handled by that service under its own privacy policy. {SITE.name} uses the details you send only to reply to you and arrange your appointment.</p>
+        <h2>Information stored on your device</h2>
+        <ul>
+          <li>Your light or dark mode choice, so the website remembers it.</li>
+          <li>The treatment you last chose, for the current browser tab only, so the booking form can be filled in for you.</li>
+        </ul>
+        <p>You can clear these at any time in your browser settings.</p>
+        <h2>Hosting</h2>
+        <p>Like any website, the hosting provider may keep standard technical logs, such as IP addresses and browser types, to keep the site secure and running.</p>
+        <h2>Contact</h2>
+        <p>Questions about your information? Contact {SITE.name} at <a href={`tel:${SITE.phone}`}>{SITE.phoneDisplay}</a> or on Instagram at <a href={SITE.instagram} target="_blank" rel="noopener">{SITE.instagramHandle}</a>.</p>
+      </div>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,14 @@
+---
+import Icon from './Icon.astro';
+import type { Step } from '../data/content';
+interface Props { items: Step[] }
+const { items } = Astro.props;
+---
+<ol class="steps">
+  {items.map((s) => (
+    <li>
+      <div class="bub"><Icon name={s.icon} /></div>
+      <div><b>{s.name}</b><span>{s.text}</span></div>
+    </li>
+  ))}
+</ol>

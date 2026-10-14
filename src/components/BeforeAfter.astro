@@ -1,0 +1,16 @@
+---
+import { Image } from 'astro:assets';
+import { img } from '../data/images';
+import Icon from './Icon.astro';
+interface Props { n: number; title: string; scroll?: boolean }
+const { n, title, scroll = false } = Astro.props;
+const before = img(`ba-${n}-before`), after = img(`ba-${n}-after`);
+---
+<div class="ba" data-ba data-ba-scroll={scroll ? '' : undefined} data-cursor="Drag">
+  <div class="layer"><Image src={before} alt={`Before: ${title}`} widths={[480, 800]} sizes="(max-width: 900px) 92vw, 45vw" loading="lazy" format="webp" quality={82} /></div>
+  <div class="layer after"><Image src={after} alt={`After: ${title}`} widths={[480, 800]} sizes="(max-width: 900px) 92vw, 45vw" loading="lazy" format="webp" quality={82} /></div>
+  <span class="ba-lab l">Before</span><span class="ba-lab r">After</span>
+  <div class="ba-line" aria-hidden="true"><span><Icon name="arrowL" /></span></div>
+  <label class="sr-only" for={`ba-${n}`}>Compare before and after: {title}</label>
+  <input id={`ba-${n}`} type="range" min="0" max="100" value="50" />
+</div>

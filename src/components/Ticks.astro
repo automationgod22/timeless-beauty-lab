@@ -1,0 +1,8 @@
+---
+import Icon from './Icon.astro';
+interface Props { items: string[]; cols?: boolean }
+const { items, cols = false } = Astro.props;
+---
+<ul class:list={['ticks', { 'two-col': cols }]}>
+  {items.map((t) => <li><Icon name="check" /><span>{t}</span></li>)}
+</ul>

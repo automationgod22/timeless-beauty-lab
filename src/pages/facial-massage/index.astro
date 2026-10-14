@@ -1,0 +1,130 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import Pic from '../../components/Pic.astro';
+import Icon from '../../components/Icon.astro';
+import BeforeAfter from '../../components/BeforeAfter.astro';
+import Faq from '../../components/Faq.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { MASSAGES, BA, priceLabel } from '../../data/content';
+import { MASSAGE_PAGES } from '../../data/massage';
+import { breadcrumbs, faqPage, catalogService } from '../../data/schema';
+
+const site = Astro.site!;
+const crumbs: [string, string][] = [['Home', '/'], ['Facial massage', '/facial-massage/']];
+const ba = BA.filter((b) => b.n === 1 || b.n === 4);
+const faqs: [string, string][] = [
+  ['What is the difference between lymphatic drainage and buccal massage?', 'Lymphatic drainage uses light, rhythmic movements to move excess fluid and de-puff the face. Buccal massage works deeper, partly from inside the mouth, to release and tone the cheek and jaw muscles. Together they are the signature pairing of the studio.'],
+  ['How soon will I see results?', 'Most clients see a more defined, less puffy face right after one session. A course of sessions gives longer-lasting results.'],
+  ['Can facial massage be combined with a facial?', 'Yes. Sculpt & Glow and Oxygen Lymphatic Glow both include a full lymphatic drainage massage, and massage can be paired with RF skin tightening or carboxytherapy.'],
+  ['Is facial massage right for everyone?', 'If you are pregnant, have an active skin infection, a heart or kidney condition, or had injectables recently, mention it when you book so Tatiana can advise you.'],
+];
+const description =
+  'Facial massage in Jersey City: lymphatic drainage, buccal, myofascial and sculpting facial massage to de-puff, release tension and define your contour. Non-invasive, no needles.';
+---
+<Base
+  title="Facial Massage in Jersey City | Lymphatic, Buccal & Sculpting Massage"
+  description={description}
+  og="massage"
+  jsonLd={[
+    catalogService(site, { name: 'Facial massage', serviceType: 'Facial massage', description, path: '/facial-massage/', items: MASSAGES }),
+    breadcrumbs(site, crumbs),
+    faqPage(faqs),
+  ]}
+>
+  <PageHero
+    crumbs={crumbs}
+    eyebrow="Facial massage"
+    title="Facial massage and sculpting"
+    lede="Hands-on techniques that de-puff, release tension and define your contour, with results you can often see after a single session."
+  />
+
+  <section class="sec" aria-labelledby="menu-title">
+    <div class="wrap detail">
+      <div class="media">
+        <figure class="pic round ratio-45">
+          <video muted loop playsinline preload="metadata" poster="/video/massage-poster.webp" data-autoplay disablepictureinpicture aria-hidden="true">
+            <source src="/video/massage.mp4" type="video/mp4" />
+          </video>
+        </figure>
+      </div>
+      <div>
+        <p class="eyebrow">The techniques</p>
+        <h2 id="menu-title" data-split>Six ways to a defined, rested face.</h2>
+        <ul class="plist mt-m">
+          {MASSAGES.map((m) => (
+            <li>
+              <div><p class="n">{m.href ? <a href={m.href}>{m.name}</a> : m.name}</p></div>
+              <span class:list={['p', 'price', { req: !m.price }]}>{priceLabel(m.price)}</span>
+              <p class="t">{m.text}</p>
+            </li>
+          ))}
+        </ul>
+        <div class="btns mt-m">
+          <a class="btn btn-primary" href="/book/?treatment=lymphatic-buccal" data-treatment="lymphatic-buccal" data-magnetic><span>Book a facial massage</span></a>
+          <a class="link" href="/facials/sculpt-and-glow/"><span>Or try Sculpt &amp; Glow</span><Icon name="arrow" /></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec tint" aria-labelledby="deep-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <p class="eyebrow">The signature pairing</p>
+          <h2 id="deep-title" data-split>Drainage to de-puff. Buccal to sculpt.</h2>
+        </div>
+        <div class="side" data-reveal>
+          <p class="body-2">The two most booked techniques in the studio, each with its own guide: what it is, who it is for and what a session feels like.</p>
+        </div>
+      </div>
+      <div class="lgrid" data-reveal>
+        {MASSAGE_PAGES.map((m) => (
+          <a class="lcard" href={`/facial-massage/${m.slug}/`}>
+            <Pic name={m.img} alt={m.imgAlt} sizes="120px" widths={[240]} />
+            <span><b>{m.h1}</b><small>{m.lede.split('. ')[0]}.</small></span>
+            <Icon name="arrow" class="go" />
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" aria-labelledby="results-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <p class="eyebrow">Massage results</p>
+          <h2 id="results-title" data-split>Visible after one session.</h2>
+        </div>
+        <div class="side" data-reveal>
+          <p class="body-2">Scroll, or drag the slider, to compare. Individual results vary.</p>
+          <a class="link" href="/results/"><span>See all results</span><Icon name="arrow" /></a>
+        </div>
+      </div>
+      <div class="bagrid">
+        {ba.map((b) => (
+          <div class="bacard" data-reveal>
+            <BeforeAfter n={b.n} title={b.title} scroll />
+            <p class="cap"><b>{b.title}</b><span>{b.note}</span></p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="sec tint" aria-labelledby="faq-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <p class="eyebrow">Questions</p>
+          <h2 id="faq-title" data-split>About facial massage.</h2>
+        </div>
+      </div>
+      <Faq items={faqs} />
+    </div>
+  </section>
+
+  <CtaBand title="Ready to feel the difference?" treatment="lymphatic-buccal" treatmentName="lymphatic drainage and buccal massage" />
+</Base>

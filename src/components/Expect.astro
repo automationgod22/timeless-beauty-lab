@@ -1,0 +1,13 @@
+---
+interface Props { items: { k: string; title: string; text: string }[] }
+const { items } = Astro.props;
+---
+<div class="expect" data-reveal>
+  {items.map((it) => (
+    <div>
+      <p class="k">{it.k}</p>
+      <h3>{it.title}</h3>
+      <p>{it.text}</p>
+    </div>
+  ))}
+</div>

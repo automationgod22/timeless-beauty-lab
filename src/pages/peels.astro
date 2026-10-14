@@ -1,0 +1,120 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Pic from '../components/Pic.astro';
+import Icon from '../components/Icon.astro';
+import BeforeAfter from '../components/BeforeAfter.astro';
+import Steps from '../components/Steps.astro';
+import Faq from '../components/Faq.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { PEELS, PEEL_VISIT, FAQ_PEELS, BA, GALLERY, priceLabel } from '../data/content';
+import { breadcrumbs, faqPage, catalogService } from '../data/schema';
+
+const site = Astro.site!;
+const crumbs: [string, string][] = [['Home', '/'], ['Peels', '/peels/']];
+const ba = BA.filter((b) => b.n === 3 || b.n === 2);
+const results = GALLERY.filter((g) => g.img === 'r-6' || g.img === 'r-7');
+const description =
+  'Professional peels in Jersey City: LET Eye Peel, ESABIOPEEL biorevitalizing peel, OENANTHE, LAMI Glass Skin Renewal and AHA/BHA peels. No needles, with little or no visible peeling.';
+---
+<Base
+  title="Professional Chemical Peels in Jersey City | LET, ESABIOPEEL & More"
+  description={description}
+  og="peels"
+  jsonLd={[
+    catalogService(site, { name: 'Professional peels', serviceType: 'Chemical peel', description, path: '/peels/', items: PEELS }),
+    breadcrumbs(site, crumbs),
+    faqPage(FAQ_PEELS),
+  ]}
+>
+  <PageHero
+    crumbs={crumbs}
+    eyebrow="Professional peels"
+    title="Professional peels in Jersey City"
+    lede="Biorevitalizing and classic peels that renew, refine and brighten, chosen for your skin, your goals and the season."
+  />
+
+  <section class="sec" aria-labelledby="menu-title">
+    <div class="wrap detail">
+      <div class="media">
+        <Pic name="esabiopeel" alt="ESABIOPEEL biorevitalizing peel by Aesthetical" sizes="(max-width: 900px) 92vw, 45vw" />
+      </div>
+      <div>
+        <p class="eyebrow">The peel menu</p>
+        <h2 id="menu-title" data-split>Five peels, each with a purpose.</h2>
+        <ul class="plist mt-m">
+          {PEELS.map((p) => (
+            <li>
+              <div><p class="n">{p.name}</p>{p.by && <p class="by">{p.by}</p>}</div>
+              <span class:list={['p', 'price', { req: !p.price }]}>{priceLabel(p.price)}</span>
+              <p class="t">{p.text}</p>
+            </li>
+          ))}
+        </ul>
+        <p class="note mt-s">Prices are starting prices. Many skin goals respond best to a short series of peels, planned at your consultation.</p>
+        <div class="btns mt-m">
+          <a class="btn btn-primary" href="/book/?treatment=let-eye-peel" data-treatment="let-eye-peel" data-magnetic><span>Book a peel</span></a>
+          <a class="link" href="/skin-quiz/"><span>Not sure? Take the skin quiz</span><Icon name="arrow" /></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec tint" aria-labelledby="visit-title">
+    <div class="wrap split">
+      <div>
+        <p class="eyebrow">Your visit</p>
+        <h2 id="visit-title" data-split>How a peel appointment works.</h2>
+        <div data-reveal class="mt-s">
+          <p class="body-2">Every peel starts with a short consultation, so the right peel and strength are chosen for your skin on the day. Most peels leave little or no visible peeling, and you always know what to expect before you begin.</p>
+        </div>
+      </div>
+      <div data-reveal><Steps items={PEEL_VISIT} /></div>
+    </div>
+  </section>
+
+  <section class="sec" aria-labelledby="results-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <p class="eyebrow">Peel results</p>
+          <h2 id="results-title" data-split>Smoother, brighter, more even.</h2>
+        </div>
+        <div class="side" data-reveal>
+          <p class="body-2">Scroll, or drag the slider, to compare. Individual results vary.</p>
+          <a class="link" href="/results/"><span>See all results</span><Icon name="arrow" /></a>
+        </div>
+      </div>
+      <div class="bagrid">
+        {ba.map((b) => (
+          <div class="bacard" data-reveal>
+            <BeforeAfter n={b.n} title={b.title} scroll />
+            <p class="cap"><b>{b.title}</b><span>{b.note}</span></p>
+          </div>
+        ))}
+      </div>
+      <div class="rgal two mt-l">
+        {results.map((g) => (
+          <figure data-reveal>
+            <Pic name={g.img} alt={`Before and after: ${g.title}, ${g.note.toLowerCase()}`} sizes="(max-width: 560px) 92vw, 45vw" />
+            <figcaption class="cap"><b>{g.title}</b><span>{g.note}</span></figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="sec tint" aria-labelledby="faq-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <p class="eyebrow">Questions</p>
+          <h2 id="faq-title" data-split>About peels.</h2>
+        </div>
+      </div>
+      <Faq items={FAQ_PEELS} />
+    </div>
+  </section>
+
+  <CtaBand title="Ready for fresh, renewed skin?" text="Book a peel, or message the studio and Tatiana will recommend the right one for your skin." />
+</Base>

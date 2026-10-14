@@ -1,0 +1,26 @@
+---
+import Icon from './Icon.astro';
+import { waLink } from '../data/site';
+interface Props { title?: string; text?: string; treatment?: string; treatmentName?: string }
+const {
+  title = 'Ready for your glow?',
+  text = 'Book your visit online, or message the studio for a personal treatment recommendation.',
+  treatment,
+  treatmentName,
+} = Astro.props;
+const href = treatment ? `/book/?treatment=${treatment}` : '/book/';
+const msg = treatmentName ? `Hi! I'd like to book the ${treatmentName} at Timeless Beauty Lab.` : "Hi! I'd like to book an appointment at Timeless Beauty Lab.";
+---
+<section class="band cta">
+  <div class="wrap">
+    <div data-reveal>
+      <p class="eyebrow">Timeless Beauty Lab, Jersey City</p>
+      <h2>{title}</h2>
+      <p class="lede" style="margin-top:22px">{text}</p>
+    </div>
+    <div class="btns" data-reveal>
+      <a class="btn btn-band" href={href} data-treatment={treatment} data-magnetic><span>Book an appointment</span></a>
+      <a class="btn btn-band-ghost" href={waLink(msg)} target="_blank" rel="noopener"><Icon name="chat" /><span>WhatsApp</span></a>
+    </div>
+  </div>
+</section>

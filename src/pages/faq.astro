@@ -1,0 +1,44 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Faq from '../components/Faq.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { FAQ_GENERAL, FAQ_PEELS } from '../data/content';
+import { breadcrumbs, faqPage } from '../data/schema';
+
+const site = Astro.site!;
+const crumbs: [string, string][] = [['Home', '/'], ['FAQ', '/faq/']];
+---
+<Base
+  title="FAQ | Facials, Peels & Facial Massage | Timeless Beauty Lab, Jersey City"
+  description="Answers about downtime, preparation, peels, how often to come and how to book at Timeless Beauty Lab, a private facial studio in Jersey City, NJ."
+  jsonLd={[faqPage([...FAQ_GENERAL, ...FAQ_PEELS]), breadcrumbs(site, crumbs)]}
+>
+  <PageHero crumbs={crumbs} eyebrow="Questions" title="Frequently asked questions" lede="Everything about your visit, from choosing a treatment to aftercare. Still wondering? Send a message and Tatiana will answer personally." />
+
+  <section class="sec" aria-labelledby="general-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <p class="eyebrow">Your visit</p>
+          <h2 id="general-title" data-split>Treatments and visits.</h2>
+        </div>
+      </div>
+      <Faq items={FAQ_GENERAL} />
+    </div>
+  </section>
+
+  <section class="sec tint" aria-labelledby="peels-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <p class="eyebrow">Peels</p>
+          <h2 id="peels-title" data-split>About professional peels.</h2>
+        </div>
+      </div>
+      <Faq items={FAQ_PEELS} />
+    </div>
+  </section>
+
+  <CtaBand title="Still have a question?" text="Message the studio on WhatsApp or Instagram, or book your visit online." />
+</Base>

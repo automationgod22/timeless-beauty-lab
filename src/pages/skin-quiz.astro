@@ -1,0 +1,70 @@
+---
+import { getImage } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import { QUESTIONS, PICKS } from '../data/quiz';
+import { BOOKABLE, priceLabel } from '../data/content';
+import { img } from '../data/images';
+import { SITE } from '../data/site';
+import { breadcrumbs } from '../data/schema';
+
+const site = Astro.site!;
+const crumbs: [string, string][] = [['Home', '/'], ['Skin quiz', '/skin-quiz/']];
+
+// Everything the quiz script needs, resolved at build time (names, prices, optimised image URLs).
+const picks = await Promise.all(
+  PICKS.map(async (p) => {
+    const b = BOOKABLE.find((x) => x.id === p.id);
+    if (!b) throw new Error(`Quiz pick without a bookable treatment: ${p.id}`);
+    const src = img(p.img);
+    const im = await getImage({ src, width: Math.min(560, src.width), format: 'webp', quality: 80 });
+    return { id: p.id, name: b.name, href: b.href, minutes: b.minutes ?? '', price: priceLabel(b.price), tagline: p.tagline, why: p.why, img: im.src, score: p.score };
+  }),
+);
+const labels = Object.fromEntries(QUESTIONS.map((q) => [q.key, Object.fromEntries(q.options.map((o) => [o.id, o.label]))]));
+const data = { picks, labels, whatsapp: SITE.whatsapp, order: QUESTIONS.map((q) => q.key), book: '/book/' };
+---
+<Base
+  title="Skin Quiz: Find Your Facial in 30 Seconds | Timeless Beauty Lab"
+  description="Answer four quick questions about your skin and goals and get a personal facial, peel or facial massage match, with timing and price. Timeless Beauty Lab, Jersey City."
+  jsonLd={[breadcrumbs(site, crumbs)]}
+>
+  <PageHero compact crumbs={crumbs} eyebrow="Skin quiz" title="Find your perfect treatment" lede="Four quick questions, about 30 seconds. Get a personal match with timing and price." />
+
+  <section class="sec flow">
+    <div class="wrap">
+      <div class="quiz" id="quiz">
+        <div class="qbar" aria-hidden="true"><i></i></div>
+        {QUESTIONS.map((q, qi) => (
+          <div class="qstep" data-q={q.key} role="group" aria-labelledby={`q-${q.key}`} hidden={qi > 0}>
+            <p class="qcount">Question {qi + 1} of {QUESTIONS.length}</p>
+            <h2 id={`q-${q.key}`}>{q.title}</h2>
+            <div class="qopts">
+              {q.options.map((o) => (
+                <button type="button" class="qopt" data-v={o.id} aria-pressed="false">
+                  {o.badge ? <span class="bub t">{o.badge}</span> : <span class="bub"><Icon name={o.icon ?? 'spark'} /></span>}
+                  <span><b>{o.label}</b><small>{o.hint}</small></span>
+                </button>
+              ))}
+            </div>
+            <div class="qnav">
+              {qi > 0 ? <button type="button" class="link" data-back><Icon name="arrowL" /><span>Back</span></button> : <span></span>}
+              <span class="small">Your answers stay on this device.</span>
+            </div>
+          </div>
+        ))}
+        <div class="qresult" id="qresult" hidden tabindex="-1"></div>
+        <noscript>
+          <p class="lede">The quiz needs JavaScript. You can <a href="/facials/">compare every facial</a> or <a href="/book/">send a booking request</a> instead.</p>
+        </noscript>
+      </div>
+    </div>
+  </section>
+
+  <script type="application/json" id="quiz-data" set:html={JSON.stringify(data)} />
+  <script>
+    import { initQuiz } from '../scripts/quiz';
+    initQuiz();
+  </script>
+</Base>

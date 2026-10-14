@@ -1,0 +1,117 @@
+---
+import { getImage } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import Crumbs from '../../components/Crumbs.astro';
+import Pic from '../../components/Pic.astro';
+import Icon from '../../components/Icon.astro';
+import FacialCard from '../../components/FacialCard.astro';
+import Faq from '../../components/Faq.astro';
+import Steps from '../../components/Steps.astro';
+import Ticks from '../../components/Ticks.astro';
+import Expect from '../../components/Expect.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { FACIALS, priceLabel, type Facial } from '../../data/content';
+import { img } from '../../data/images';
+import { waLink } from '../../data/site';
+import { service, breadcrumbs, faqPage } from '../../data/schema';
+
+export function getStaticPaths() {
+  return FACIALS.map((f, i) => ({ params: { slug: f.slug }, props: { f, i } }));
+}
+interface Props { f: Facial; i: number }
+const { f, i } = Astro.props;
+const site = Astro.site!;
+const crumbs: [string, string][] = [['Home', '/'], ['Facials', '/facials/'], [f.name, `/facials/${f.slug}/`]];
+const related = [1, 2, 3].map((k) => FACIALS[(i + k) % FACIALS.length]);
+const src = img(f.img);
+const hero = await getImage({ src, width: Math.min(820, src.width), format: 'webp' });
+const ask = waLink(`Hi! I'd like to book the ${f.name} at Timeless Beauty Lab.`);
+const expect = [
+  { k: 'Before', title: 'Come as you are', text: 'Arrive with clean skin if you can. When you book, mention any recent injectables, peels, retinoids or skin conditions so every step can be adapted.' },
+  { k: 'During', title: `${f.minutes} in a private suite`, text: 'A short consultation, then every step is adjusted to your skin on the day. One client at a time, so nothing is rushed.' },
+  { k: 'After', title: 'Back to your day', text: 'Skip heavy makeup and intense workouts for the rest of the day, wear SPF and enjoy the glow. You leave with simple aftercare advice.' },
+];
+---
+<Base title={f.seoTitle} description={f.seoDescription} og={f.slug} jsonLd={[service(site, f, hero.src), breadcrumbs(site, crumbs), faqPage(f.faqs)]}>
+  <section class="sec-tight">
+    <div class="wrap">
+      <Crumbs items={crumbs} />
+      <div class="detail">
+        <div class="media">
+          <Pic name={f.img} alt={f.imgAlt} eager vt={`facial-${f.slug}`} sizes="(max-width: 900px) 92vw, 45vw" />
+        </div>
+        <div>
+          {f.flag && <p class="flag">{f.flag}</p>}
+          <h1 data-split="load">{f.name}</h1>
+          <div data-reveal><p class="lede">{f.tagline}</p></div>
+          <div class="price-row" data-reveal>
+            <span class:list={['price', { req: !f.price }]}>{priceLabel(f.price)}</span>
+            <span><Icon name="clock" />{f.minutes}</span>
+            <span><Icon name="check" />Non-invasive</span>
+          </div>
+          <div data-reveal><p class="intro">{f.intro}</p></div>
+          <div class="btns" data-reveal>
+            <a class="btn btn-primary" href={`/book/?treatment=${f.slug}`} data-treatment={f.slug} data-magnetic><span>Book this facial</span></a>
+            <a class="link" href={ask} target="_blank" rel="noopener"><Icon name="chat" /><span>Ask on WhatsApp</span></a>
+          </div>
+
+          <div class="block" data-reveal>
+            <h2>What's included</h2>
+            <Steps items={f.steps} />
+          </div>
+          <div class="block" data-reveal>
+            <h2>What you'll notice</h2>
+            <Ticks items={f.benefits} cols />
+          </div>
+          <div class="block" data-reveal>
+            <h2>Ideal for</h2>
+            <Ticks items={f.idealFor} />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec tint" aria-labelledby="visit-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <p class="eyebrow">Your visit</p>
+          <h2 id="visit-title" data-split>What to expect.</h2>
+        </div>
+      </div>
+      <Expect items={expect} />
+    </div>
+  </section>
+
+  <section class="sec" aria-labelledby="faq-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <p class="eyebrow">Questions</p>
+          <h2 id="faq-title" data-split>About the {f.name}.</h2>
+        </div>
+      </div>
+      <Faq items={f.faqs} />
+    </div>
+  </section>
+
+  <section class="sec tint" aria-labelledby="more-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <p class="eyebrow">You may also love</p>
+          <h2 id="more-title" data-split>More signature facials.</h2>
+        </div>
+        <div class="side" data-reveal>
+          <a class="link" href="/facials/"><span>Compare all facials</span><Icon name="arrow" /></a>
+        </div>
+      </div>
+      <div class="fgrid">
+        {related.map((r) => <FacialCard f={r} />)}
+      </div>
+    </div>
+  </section>
+
+  <CtaBand title={`Ready for your ${f.name}?`} treatment={f.slug} treatmentName={f.name} />
+</Base>

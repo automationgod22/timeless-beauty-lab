@@ -1,0 +1,162 @@
+---
+import '@fontsource-variable/hanken-grotesk/index.css';
+import '../styles/global.css';
+import frauncesFont from '../assets/fonts/fraunces-soft-latin.woff2?url';
+import hankenFont from '@fontsource-variable/hanken-grotesk/files/hanken-grotesk-latin-wght-normal.woff2?url';
+import Icon from '../components/Icon.astro';
+import { SITE, ALLOW_INDEXING, waLink } from '../data/site';
+
+interface Props {
+  title: string;
+  description: string;
+  og?: string;
+  jsonLd?: object[];
+  noindex?: boolean;
+  preloadImage?: string;
+}
+const { title, description, og = 'default', jsonLd = [], noindex = false, preloadImage } = Astro.props;
+const site = Astro.site!;
+const canonical = new URL(Astro.url.pathname, site).toString();
+const ogImage = new URL(`/og/${og}.jpg`, site).toString();
+const path = Astro.url.pathname;
+const robots = ALLOW_INDEXING && !noindex ? 'index, follow, max-image-preview:large' : 'noindex, nofollow';
+const nav = [
+  ['Facials', '/facials/'],
+  ['Peels', '/peels/'],
+  ['Massage', '/facial-massage/'],
+  ['Results', '/results/'],
+  ['Prices', '/prices/'],
+  ['Skin quiz', '/skin-quiz/'],
+  ['About', '/about/'],
+];
+const isActive = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
+const waBook = waLink("Hi! I'd like to book an appointment at Timeless Beauty Lab.");
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonical} />
+  <meta name="robots" content={robots} />
+  <meta name="theme-color" content="#FFFDF9" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#0E0C0A" media="(prefers-color-scheme: dark)" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content={SITE.name} />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={canonical} />
+  <meta property="og:image" content={ogImage} />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={ogImage} />
+  <meta name="geo.region" content="US-NJ" />
+  <meta name="geo.placename" content="Jersey City" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <link rel="sitemap" href="/sitemap-index.xml" />
+  <link rel="preload" href={frauncesFont} as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href={hankenFont} as="font" type="font/woff2" crossorigin />
+  {preloadImage && <link rel="preload" as="image" href={preloadImage} fetchpriority="high" />}
+  <script is:inline>
+    (function () {
+      var d = document.documentElement, t;
+      try { t = localStorage.getItem('tbl-theme'); } catch (e) {}
+      if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      d.setAttribute('data-theme', t);
+    })();
+  </script>
+  {jsonLd.map((j) => <script type="application/ld+json" set:html={JSON.stringify(j)} />)}
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-head" id="head">
+    <div class="wrap">
+      <a class="logo" href="/"><b>Timeless</b> <span>Beauty Lab</span></a>
+      <nav class="nav" aria-label="Main">
+        {nav.map(([label, href]) => <a href={href} aria-current={isActive(href) ? 'page' : undefined}>{label}</a>)}
+      </nav>
+      <div class="head-end">
+        <button class="icon-btn theme-btn" id="theme-btn" type="button" aria-label="Switch light or dark mode">
+          <span class="sun"><Icon name="sun" /></span><span class="moon"><Icon name="moon" /></span>
+        </button>
+        <a class="btn btn-primary btn-sm" href="/book/" data-magnetic><span>Book now</span></a>
+        <button class="menu-btn" id="menu-btn" type="button" aria-expanded="false" aria-controls="mmenu"><span id="menu-label">Menu</span><i aria-hidden="true"></i></button>
+      </div>
+    </div>
+  </header>
+  <div class="mmenu" id="mmenu" aria-hidden="true">
+    <ul>
+      <li><a class="big" href="/">Home</a></li>
+      {nav.map(([label, href]) => <li><a class="big" href={href}>{label === 'Massage' ? 'Facial massage' : label}</a></li>)}
+      <li><a class="big" href="/book/">Book a visit</a></li>
+    </ul>
+    <div class="meta"><span>{SITE.address.street}, {SITE.address.city}</span><span>{SITE.phoneDisplay}</span></div>
+  </div>
+
+  <main id="main">
+    <slot />
+  </main>
+
+  <footer class="site-foot">
+    <div class="wrap">
+      <div class="grid">
+        <div>
+          <a class="logo" href="/"><b>Timeless</b> <span>Beauty Lab</span></a>
+          <p>Non-invasive advanced facials, professional peels and facial sculpting by {SITE.owner}, in a private suite in Jersey City, New Jersey.</p>
+        </div>
+        <div>
+          <h2 class="fh">Treatments</h2>
+          <ul>
+            <li><a href="/facials/">Signature facials</a></li>
+            <li><a href="/peels/">Professional peels</a></li>
+            <li><a href="/facial-massage/">Facial massage</a></li>
+            <li><a href="/facial-massage/buccal-massage/">Buccal massage</a></li>
+            <li><a href="/facial-massage/lymphatic-drainage-facial/">Lymphatic drainage</a></li>
+          </ul>
+        </div>
+        <div>
+          <h2 class="fh">Studio</h2>
+          <ul>
+            <li><a href="/about/">About {SITE.owner}</a></li>
+            <li><a href="/results/">Results</a></li>
+            <li><a href="/prices/">Prices</a></li>
+            <li><a href="/skin-quiz/">Skin quiz</a></li>
+            <li><a href="/faq/">FAQ</a></li>
+          </ul>
+        </div>
+        <div>
+          <h2 class="fh">Visit</h2>
+          <ul>
+            <li><a href={SITE.mapsUrl} target="_blank" rel="noopener">{SITE.address.building}, Suite 113<br />611 Washington Blvd, Jersey City, NJ 07310</a></li>
+            <li><a href={`tel:${SITE.phone}`}>{SITE.phoneDisplay}</a></li>
+            <li><a href={SITE.instagram} target="_blank" rel="noopener">Instagram {SITE.instagramHandle}</a></li>
+            <li><a href={waBook} target="_blank" rel="noopener">WhatsApp</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot-word" aria-hidden="true">Timeless</div>
+      <div class="base"><span>© {new Date().getFullYear()} {SITE.name}. Jersey City, NJ.</span><span><a href="/privacy/">Privacy</a></span></div>
+    </div>
+  </footer>
+
+  <div class="mbar" id="mbar">
+    <a class="btn btn-primary" href="/book/"><span>Book an appointment</span></a>
+    <a class="icon-btn" href={waBook} target="_blank" rel="noopener" aria-label="Chat on WhatsApp"><Icon name="chat" /></a>
+    <a class="icon-btn" href={SITE.instagramDM} target="_blank" rel="noopener" aria-label="Message on Instagram"><Icon name="ig" /></a>
+  </div>
+  <div class="cursor" id="cursor" aria-hidden="true"><b></b></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    import '../scripts/main.ts';
+  </script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+---
+import Crumbs from './Crumbs.astro';
+interface Props { crumbs: [string, string][]; title: string; lede?: string; eyebrow?: string; compact?: boolean }
+const { crumbs, title, lede, eyebrow, compact = false } = Astro.props;
+---
+<section class:list={['phero', { compact }]}>
+  <div class="wrap">
+    <Crumbs items={crumbs} />
+    {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+    <h1 data-split="load">{title}</h1>
+    {lede && <div data-reveal><p class="lede">{lede}</p></div>}
+    <slot />
+  </div>
+</section>

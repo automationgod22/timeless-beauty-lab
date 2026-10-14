@@ -1,0 +1,142 @@
+---
+import Base from '../../layouts/Base.astro';
+import Crumbs from '../../components/Crumbs.astro';
+import Pic from '../../components/Pic.astro';
+import Icon from '../../components/Icon.astro';
+import Faq from '../../components/Faq.astro';
+import Ticks from '../../components/Ticks.astro';
+import Expect from '../../components/Expect.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { MASSAGE_PAGES, type MassagePage } from '../../data/massage';
+import { BOOKABLE, GALLERY, FACIALS, priceLabel } from '../../data/content';
+import { waLink } from '../../data/site';
+import { simpleService, breadcrumbs, faqPage } from '../../data/schema';
+
+export function getStaticPaths() {
+  return MASSAGE_PAGES.map((m) => ({ params: { slug: m.slug }, props: { m } }));
+}
+interface Props { m: MassagePage }
+const { m } = Astro.props;
+const site = Astro.site!;
+const path = `/facial-massage/${m.slug}/`;
+const crumbs: [string, string][] = [['Home', '/'], ['Facial massage', '/facial-massage/'], [m.name, path]];
+const book = BOOKABLE.find((b) => b.id === m.bookId);
+const results = m.results.map((r) => GALLERY.find((g) => g.img === r)!).filter(Boolean);
+const other = MASSAGE_PAGES.find((x) => x.slug !== m.slug)!;
+const sculpt = FACIALS.find((f) => f.slug === 'sculpt-and-glow')!;
+const ask = waLink(`Hi! I'd like to book a ${m.name.toLowerCase()} at Timeless Beauty Lab.`);
+const visit = m.visit.map((s, i) => ({ k: `Step ${i + 1}`, title: s.name, text: s.text }));
+---
+<Base title={m.seoTitle} description={m.seoDescription} og="massage" jsonLd={[simpleService(site, m.name, m.seoDescription, path), breadcrumbs(site, crumbs), faqPage(m.faqs)]}>
+  <section class="sec-tight">
+    <div class="wrap">
+      <Crumbs items={crumbs} />
+      <div class="detail">
+        <div class="media">
+          <Pic name={m.img} alt={m.imgAlt} eager sizes="(max-width: 900px) 92vw, 45vw" />
+        </div>
+        <div>
+          <p class="flag">{m.eyebrow}</p>
+          <h1 data-split="load">{m.h1}</h1>
+          <div data-reveal><p class="lede">{m.lede}</p></div>
+          <div class="price-row" data-reveal>
+            <span class:list={['price', { req: !book?.price }]}>{priceLabel(book?.price)}</span>
+            <span><Icon name="check" />Non-invasive</span>
+            <span><Icon name="check" />No needles</span>
+          </div>
+          <div class="btns mt-m" data-reveal>
+            <a class="btn btn-primary" href={`/book/?treatment=${m.bookId}`} data-treatment={m.bookId} data-magnetic><span>Book this massage</span></a>
+            <a class="link" href={ask} target="_blank" rel="noopener"><Icon name="chat" /><span>Ask on WhatsApp</span></a>
+          </div>
+
+          <div class="block prose" data-reveal>
+            <h2>What it is</h2>
+            {m.what.map((p) => <p>{p}</p>)}
+          </div>
+          <div class="block" data-reveal>
+            <h2>What you'll notice</h2>
+            <Ticks items={m.benefits} cols />
+          </div>
+          <div class="block" data-reveal>
+            <h2>Ideal for</h2>
+            <Ticks items={m.idealFor} />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec tint" aria-labelledby="visit-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <p class="eyebrow">Your session</p>
+          <h2 id="visit-title" data-split>What to expect.</h2>
+        </div>
+      </div>
+      <Expect items={visit} />
+    </div>
+  </section>
+
+  {results.length > 0 && (
+    <section class="sec" aria-labelledby="results-title">
+      <div class="wrap">
+        <div class="sec-head">
+          <div>
+            <p class="eyebrow">Results</p>
+            <h2 id="results-title" data-split>Before and after.</h2>
+          </div>
+          <div class="side" data-reveal>
+            <p class="body-2">Clients of Timeless Beauty Lab. Individual results vary.</p>
+            <a class="link" href="/results/"><span>See all results</span><Icon name="arrow" /></a>
+          </div>
+        </div>
+        <div class="rgal">
+          {results.map((g) => (
+            <figure data-reveal>
+              <Pic name={g.img} alt={`Before and after: ${g.title}, ${g.note.toLowerCase()}`} sizes="(max-width: 560px) 92vw, (max-width: 900px) 45vw, 30vw" />
+              <figcaption class="cap"><b>{g.title}</b><span>{g.note}</span></figcaption>
+            </figure>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <section class="sec tint" aria-labelledby="faq-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <p class="eyebrow">Questions</p>
+          <h2 id="faq-title" data-split>About {m.name.toLowerCase()}.</h2>
+        </div>
+      </div>
+      <Faq items={m.faqs} />
+    </div>
+  </section>
+
+  <section class="sec" aria-labelledby="more-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <p class="eyebrow">Pairs well with</p>
+          <h2 id="more-title" data-split>Keep exploring.</h2>
+        </div>
+      </div>
+      <div class="lgrid" data-reveal>
+        <a class="lcard" href={`/facial-massage/${other.slug}/`}>
+          <Pic name={other.img} alt={other.imgAlt} sizes="120px" widths={[240]} />
+          <span><b>{other.h1}</b><small>{other.lede.split('. ')[0]}.</small></span>
+          <Icon name="arrow" class="go" />
+        </a>
+        <a class="lcard" href={`/facials/${sculpt.slug}/`}>
+          <Pic name={sculpt.img} alt={sculpt.imgAlt} sizes="120px" widths={[240]} />
+          <span><b>{sculpt.name}</b><small>{sculpt.tagline}</small></span>
+          <Icon name="arrow" class="go" />
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand title="Ready to feel the difference?" treatment={m.bookId} treatmentName={m.name.toLowerCase()} />
+</Base>

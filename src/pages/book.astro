@@ -1,0 +1,140 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import { BOOKABLE } from '../data/content';
+import { SITE, waLink } from '../data/site';
+import { breadcrumbs } from '../data/schema';
+
+const site = Astro.site!;
+const crumbs: [string, string][] = [['Home', '/'], ['Book', '/book/']];
+const groups = ['Signature facials', 'Professional peels', 'Facial massage'] as const;
+const popularIds = ['glass-skin-glow-up', 'sculpt-and-glow', 'hydro-glow-freeze-facial', 'lymphatic-buccal', 'let-eye-peel'];
+const popular = popularIds.map((id) => BOOKABLE.find((b) => b.id === id)!).filter(Boolean);
+const short: Record<string, string> = { 'lymphatic-buccal': 'Lymphatic + buccal' };
+const data = { phone: SITE.phone, whatsapp: SITE.whatsapp, ig: SITE.instagramDM };
+const times = ['Morning', 'Afternoon', 'Evening', 'Any time'];
+---
+<Base
+  title="Book a Facial in Jersey City | Timeless Beauty Lab"
+  description="Request an appointment for a facial, peel or facial massage at Timeless Beauty Lab in Jersey City. Choose your treatment and time, then send it on WhatsApp, Instagram or by text."
+  jsonLd={[breadcrumbs(site, crumbs)]}
+>
+  <PageHero
+    compact
+    crumbs={crumbs}
+    eyebrow="Book a visit"
+    title="Book your appointment"
+    lede="Choose your treatment and a time that suits you. Your request goes straight to Tatiana, who confirms your exact time personally."
+  />
+
+  <section class="sec flow">
+    <div class="wrap book-grid">
+      <aside aria-labelledby="quick-title">
+        <h2 id="quick-title" class="h3">Rather send a message?</h2>
+        <nav class="quick mt-s" aria-label="Contact the studio">
+          <a href={waLink("Hi! I'd like to book an appointment at Timeless Beauty Lab.")} target="_blank" rel="noopener">
+            <span class="qi"><Icon name="chat" /></span><span><b>WhatsApp</b><small>Usually the quickest reply</small></span><Icon name="arrow" class="go" />
+          </a>
+          <a href={SITE.instagramDM} target="_blank" rel="noopener">
+            <span class="qi"><Icon name="ig" /></span><span><b>Instagram DM</b><small>{SITE.instagramHandle}</small></span><Icon name="arrow" class="go" />
+          </a>
+          <a href={`sms:${SITE.phone}`}>
+            <span class="qi"><Icon name="phone" /></span><span><b>Text or call</b><small>{SITE.phoneDisplay}</small></span><Icon name="arrow" class="go" />
+          </a>
+        </nav>
+        <dl class="visit">
+          <div><dt>Address</dt><dd><a href={SITE.mapsUrl} target="_blank" rel="noopener">{SITE.address.street}, {SITE.address.city}, {SITE.address.region} {SITE.address.postalCode}</a></dd></div>
+          <div><dt>Inside</dt><dd>{SITE.address.building}</dd></div>
+          <div><dt>Hours</dt><dd>{SITE.hours || 'By appointment'}</dd></div>
+        </dl>
+      </aside>
+
+      <div class="booker">
+        <ol class="bsteps" aria-label="Booking steps">
+          <li class="on">Treatment</li>
+          <li>Day and time</li>
+          <li>Your details</li>
+        </ol>
+        <form id="bform" novalidate>
+          <div class="bstep" data-step="1">
+            <h3 tabindex="-1">Choose your treatment</h3>
+            <div class="field">
+              <label for="b-treatment">Treatment</label>
+              <select id="b-treatment" name="treatment">
+                <option value="">Select a treatment</option>
+                <option value="recommend" data-name="Not sure yet, I'd love a recommendation">Not sure yet: please recommend one</option>
+                {groups.map((g) => (
+                  <optgroup label={g}>
+                    {BOOKABLE.filter((b) => b.group === g).map((b) => (
+                      <option value={b.id} data-name={b.name} data-min={b.minutes} data-price={b.price ? `From $${b.price}` : undefined}>
+                        {b.name}{b.price ? ` · from $${b.price}` : ''}
+                      </option>
+                    ))}
+                  </optgroup>
+                ))}
+              </select>
+            </div>
+            <div class="field">
+              <span class="lab">Popular choices</span>
+              <div class="pick">
+                {popular.map((p) => <button type="button" data-pick={p.id} aria-pressed="false">{short[p.id] ?? p.name}</button>)}
+              </div>
+            </div>
+            <p class="err" hidden>Please choose a treatment, or pick “Not sure yet”.</p>
+            <div class="bnav"><span></span><button type="button" class="btn btn-primary" data-next><span>Continue</span><Icon name="arrow" /></button></div>
+          </div>
+
+          <div class="bstep" data-step="2" hidden>
+            <h3 tabindex="-1">When suits you?</h3>
+            <fieldset class="field">
+              <legend>Preferred day</legend>
+              <div class="days" id="b-days">
+                <label class="chip"><input type="radio" name="day" value="Any day" checked /><span><small>Flexible</small><b>Any</b><small>day</small></span></label>
+              </div>
+            </fieldset>
+            <fieldset class="field">
+              <legend>Time of day</legend>
+              <div class="radios">
+                {times.map((t) => <label class="chip"><input type="radio" name="time" value={t} checked={t === 'Any time'} /><span>{t}</span></label>)}
+              </div>
+            </fieldset>
+            <div class="bnav">
+              <button type="button" class="link" data-prev><Icon name="arrowL" /><span>Back</span></button>
+              <button type="button" class="btn btn-primary" data-next><span>Continue</span><Icon name="arrow" /></button>
+            </div>
+          </div>
+
+          <div class="bstep" data-step="3" hidden>
+            <h3 tabindex="-1">Your details</h3>
+            <div class="two">
+              <div class="field"><label for="b-name">Name</label><input id="b-name" name="name" autocomplete="name" required /></div>
+              <div class="field"><label for="b-phone">Phone <span>(optional)</span></label><input id="b-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" /></div>
+            </div>
+            <div class="field">
+              <label for="b-notes">Anything Tatiana should know? <span>(optional)</span></label>
+              <textarea id="b-notes" name="notes" rows="3" placeholder="Skin goals, recent injectables or peels, allergies…"></textarea>
+            </div>
+            <p class="err" hidden>Please add your name so Tatiana knows who to reply to.</p>
+            <div class="summary" id="b-summary" aria-live="polite"></div>
+            <p class="lab">Your message</p>
+            <div class="msg" id="b-msg"></div>
+            <div class="btns">
+              <button type="button" class="btn btn-primary" data-send="wa"><Icon name="chat" /><span>Send on WhatsApp</span></button>
+              <button type="button" class="btn btn-ghost" data-send="ig"><Icon name="ig" /><span>Instagram DM</span></button>
+              <button type="button" class="link" data-send="sms"><Icon name="phone" /><span>Send as a text</span></button>
+            </div>
+            <p class="note mt-s">Nothing is booked until Tatiana confirms your time. Your details are only shared in the message you choose to send.</p>
+            <div class="bnav mt-s"><button type="button" class="link" data-prev><Icon name="arrowL" /><span>Back</span></button><span></span></div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <script type="application/json" id="book-data" set:html={JSON.stringify(data)} />
+  <script>
+    import { initBooking } from '../scripts/book';
+    initBooking();
+  </script>
+</Base>

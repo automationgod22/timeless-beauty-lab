@@ -1,0 +1,89 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import FacialCard from '../../components/FacialCard.astro';
+import Faq from '../../components/Faq.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import Icon from '../../components/Icon.astro';
+import { FACIALS, FAQ_GENERAL, priceLabel } from '../../data/content';
+import { breadcrumbs } from '../../data/schema';
+import { SITE } from '../../data/site';
+
+const site = Astro.site!;
+const crumbs: [string, string][] = [['Home', '/'], ['Facials', '/facials/']];
+const itemList = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: `Signature facials at ${SITE.name}`,
+  itemListElement: FACIALS.map((f, i) => ({ '@type': 'ListItem', position: i + 1, name: f.name, url: new URL(`/facials/${f.slug}/`, site).toString() })),
+};
+---
+<Base
+  title="Advanced Facials in Jersey City, NJ | Timeless Beauty Lab"
+  description="Seven signature facials in Jersey City: HydroFacial, microcurrent, RF skin tightening, oxygen and diamond facials, from a 60-minute express glow to a 2-hour sculpting ritual."
+  jsonLd={[breadcrumbs(site, crumbs), itemList]}
+>
+  <PageHero
+    crumbs={crumbs}
+    eyebrow="Signature facials"
+    title="Advanced facials in Jersey City"
+    lede="Seven non-invasive rituals that pair professional technology with skilled, sculpting hands. Every price shown is a starting price, confirmed at your consultation."
+  />
+
+  <section class="sec">
+    <div class="wrap">
+      <div class="fgrid">
+        {FACIALS.map((f) => <FacialCard f={f} />)}
+      </div>
+    </div>
+  </section>
+
+  <section class="sec tint" aria-labelledby="compare-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <p class="eyebrow">Compare</p>
+          <h2 id="compare-title" data-split>Which facial is right for you?</h2>
+        </div>
+        <div class="side" data-reveal>
+          <p class="body-2">Timings, technologies and what each facial does best, side by side. Still unsure? The skin quiz takes about 30 seconds.</p>
+          <a class="link" href="/skin-quiz/"><span>Take the skin quiz</span><Icon name="arrow" /></a>
+        </div>
+      </div>
+      <table class="compare">
+        <caption class="sr-only">Comparison of signature facials at {SITE.name}</caption>
+        <thead>
+          <tr><th scope="col">Facial</th><th scope="col">Time</th><th scope="col">What's included</th><th scope="col">Best for</th><th scope="col" class="num">Price</th></tr>
+        </thead>
+        <tbody>
+          {FACIALS.map((f) => (
+            <tr>
+              <td><a href={`/facials/${f.slug}/`}>{f.name}</a></td>
+              <td data-label="Time" class="nowrap">{f.minutes}</td>
+              <td data-label="Includes">{f.steps.map((s) => s.name).join(', ')}</td>
+              <td data-label="Best for">{f.idealFor[0]}</td>
+              <td class="num"><span class:list={['price', { req: !f.price }]}>{priceLabel(f.price)}</span></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="sec" aria-labelledby="faq-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <p class="eyebrow">Questions</p>
+          <h2 id="faq-title" data-split>Before your first facial.</h2>
+        </div>
+        <div class="side" data-reveal>
+          <a class="link" href="/faq/"><span>All questions</span><Icon name="arrow" /></a>
+        </div>
+      </div>
+      <Faq items={FAQ_GENERAL.slice(0, 5)} />
+    </div>
+  </section>
+
+  <CtaBand />
+</Base>

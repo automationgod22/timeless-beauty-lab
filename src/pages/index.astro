@@ -1,0 +1,330 @@
+---
+import Base from '../layouts/Base.astro';
+import Pic from '../components/Pic.astro';
+import Icon from '../components/Icon.astro';
+import FacialCard from '../components/FacialCard.astro';
+import BeforeAfter from '../components/BeforeAfter.astro';
+import Faq from '../components/Faq.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { SITE } from '../data/site';
+import { FACIALS, TECH, PEELS, BA, GALLERY, REVIEWS, FAQ_GENERAL, BOOKABLE, priceLabel } from '../data/content';
+import { QUESTIONS } from '../data/quiz';
+import { business } from '../data/schema';
+
+const site = Astro.site!;
+const website = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': new URL('/#website', site).toString(),
+  name: SITE.name,
+  url: new URL('/', site).toString(),
+  publisher: { '@id': new URL('/#business', site).toString() },
+};
+const goals = QUESTIONS[0].options;
+const peels = PEELS.filter((p) => ['let-eye-peel', 'esabiopeel', 'lami-glass-skin-renewal'].includes(p.id));
+const baHome = BA.filter((b) => b.n === 1 || b.n === 3);
+const ig = ['ig-1', 'ig-4', 'ig-5', 'ig-6', 'ig-3', 'hero'];
+---
+<Base
+  title="Timeless Beauty Lab | Advanced Facials & Peels in Jersey City, NJ"
+  description="Advanced facials, professional peels and sculpting facial massage by licensed cosmetologist Tatiana, in a private Jersey City suite. HydroFacial, microcurrent, RF and more."
+  jsonLd={[business(site), website]}
+  preloadImage="/video/hero-poster.webp"
+>
+  <!-- Hero -->
+  <section class="hero-top">
+    <div class="wrap">
+      <p class="eyebrow">Timeless Beauty Lab · Jersey City, NJ</p>
+      <h1 class="d1" data-split="load">Advanced facials for skin that looks lit from within.</h1>
+      <div class="hero-meta">
+        <div data-reveal>
+          <p class="lede">HydroFacial, microcurrent, RF tightening, professional peels and sculpting facial massage, by licensed cosmetologist {SITE.owner} in a calm, private suite.</p>
+        </div>
+        <div class="btns" data-reveal>
+          <a class="btn btn-primary" href="/book/" data-magnetic><span>Book an appointment</span></a>
+          <a class="link" href="/skin-quiz/"><span>Take the skin quiz</span><Icon name="arrow" /></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Arch that opens into a full-screen film -->
+  <section class="stage" data-stage aria-label="Inside the studio">
+    <div class="stage-frame">
+      <img class="stage-bg" src="/video/hero-poster.webp" alt="" aria-hidden="true" decoding="async" />
+      <div class="stage-shade"></div>
+      <div class="stage-media">
+        <video autoplay muted loop playsinline preload="auto" poster="/video/hero-poster.webp" data-autoplay disablepictureinpicture aria-hidden="true">
+          <source src="/video/hero.mp4" type="video/mp4" />
+        </video>
+      </div>
+    </div>
+    <div class="stage-over">
+      <div class="inner">
+        <h2><span>One private suite.</span> <span>One client at a time.</span></h2>
+        <ul>
+          <li><Icon name="check" />Non-invasive: no needles, no fillers</li>
+          <li><Icon name="check" />Licensed cosmetologist, {SITE.yearsExperience} years of experience</li>
+          <li><Icon name="check" />Every step adjusted to your skin on the day</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Statement -->
+  <section class="sec statement">
+    <div class="wrap">
+      <p class="eyebrow">The approach</p>
+      <p data-words>Every visit begins with your skin, not a script. Advanced devices and skilled, sculpting hands work together for results you can see in the mirror, without a single needle.</p>
+    </div>
+  </section>
+
+  <!-- Signature facials: horizontal rail -->
+  <section class="hscroll" data-hscroll aria-labelledby="facials-title">
+    <div class="h-viewport">
+      <div class="h-track">
+        <div class="h-intro">
+          <p class="eyebrow">Signature facials</p>
+          <h2 id="facials-title">Seven rituals, each built for a result.</h2>
+          <p class="body-2">From a 60-minute express glow to a two-hour sculpting ritual. Every price shown is a starting price.</p>
+          <a class="link" href="/facials/"><span>Compare all facials</span><Icon name="arrow" /></a>
+        </div>
+        {FACIALS.map((f) => <FacialCard f={f} class="h-card" sizes="(max-width: 899px) 78vw, 26vw" />)}
+        <div class="h-end">
+          <Icon name="spark" />
+          <h3>Not sure which one?</h3>
+          <p>Answer four quick questions and get your personal match in about 30 seconds.</p>
+          <a class="btn btn-band" href="/skin-quiz/" data-magnetic><span>Take the skin quiz</span></a>
+        </div>
+      </div>
+    </div>
+    <div class="h-progress" aria-hidden="true"><span><i></i></span></div>
+  </section>
+
+  <!-- Technology: stacking cards -->
+  <section class="sec tint" aria-labelledby="tech-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <p class="eyebrow">The technology</p>
+          <h2 id="tech-title" data-split>Six professional technologies. One expert pair of hands.</h2>
+        </div>
+        <div class="side" data-reveal>
+          <p class="lede">Every facial layers the right devices for your skin on the day. Here is what each one does, and what you will notice.</p>
+        </div>
+      </div>
+      <div class="stack">
+        {TECH.map((t, i) => (
+          <article class="stack-card" style={`--i: ${i}`}>
+            <Pic name={t.img} alt={`${t.name} during a facial at Timeless Beauty Lab`} sizes="(max-width: 760px) 90vw, 40vw" />
+            <div class="body">
+              <div class="row-between"><Icon name={t.icon} /><span class="small">0{i + 1} / 0{TECH.length}</span></div>
+              <h3>{t.name}</h3>
+              <p class="body-2">{t.text}</p>
+              <p class="notice"><Icon name="spark" />{t.notice}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Results -->
+  <section class="sec" aria-labelledby="results-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <p class="eyebrow">Real results</p>
+          <h2 id="results-title" data-split>Before and after, straight from the studio.</h2>
+        </div>
+        <div class="side" data-reveal>
+          <p class="body-2">Scroll, or drag the slider, to compare. Every photo is a client of Timeless Beauty Lab. Individual results vary.</p>
+          <a class="link" href="/results/"><span>See all results</span><Icon name="arrow" /></a>
+        </div>
+      </div>
+      <div class="bagrid">
+        {baHome.map((b) => (
+          <div class="bacard" data-reveal>
+            <BeforeAfter n={b.n} title={b.title} scroll />
+            <p class="cap"><b>{b.title}</b><span>{b.note}</span></p>
+          </div>
+        ))}
+      </div>
+    </div>
+    <div class="marquee mt-xl" role="group" aria-label="More before and after results">
+      <div class="marquee-track">
+        {[...GALLERY, ...GALLERY].map((g, i) => (
+          <Pic name={g.img} alt={i < GALLERY.length ? `Before and after: ${g.title}, ${g.note.toLowerCase()}` : ''} sizes="320px" widths={[320, 640]} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Peels -->
+  <section class="sec tint" aria-labelledby="peels-title">
+    <div class="wrap split">
+      <Pic name="peels" alt="LET Eye Peel by Aesthetical, one of the professional peels at Timeless Beauty Lab" class="arch ratio-45" parallax sizes="(max-width: 900px) 92vw, 45vw" />
+      <div>
+        <p class="eyebrow">Professional peels</p>
+        <h2 id="peels-title" data-split>Peels that renew, refine and brighten.</h2>
+        <div data-reveal class="mt-s"><p class="lede">Biorevitalizing and classic peels by professional brands, chosen for your skin, your goals and the season.</p></div>
+        <ul class="plist mt-m">
+          {peels.map((p) => (
+            <li>
+              <div><p class="n">{p.name}</p>{p.by && <p class="by">{p.by}</p>}</div>
+              <span class={`p price ${p.price ? '' : 'req'}`}>{priceLabel(p.price)}</span>
+              <p class="t">{p.text}</p>
+            </li>
+          ))}
+        </ul>
+        <a class="link mt-m" href="/peels/"><span>All peels and prices</span><Icon name="arrow" /></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Facial massage -->
+  <section class="sec" aria-labelledby="massage-title">
+    <div class="wrap split rev">
+      <figure class="pic round ratio-45" data-clip>
+        <video muted loop playsinline preload="none" poster="/video/massage-poster.webp" data-autoplay disablepictureinpicture aria-hidden="true">
+          <source src="/video/massage.mp4" type="video/mp4" />
+        </video>
+      </figure>
+      <div>
+        <p class="eyebrow">Facial massage</p>
+        <h2 id="massage-title" data-split>Hands that sculpt.</h2>
+        <div data-reveal class="mt-s"><p class="lede">Lymphatic drainage, buccal and myofascial massage de-puff, release tension and define the contour, often visibly after a single session.</p></div>
+        <nav class="quick mt-m" aria-label="Facial massage treatments">
+          <a href="/facial-massage/lymphatic-drainage-facial/"><span class="qi"><Icon name="hands" /></span><span><b>Lymphatic drainage facial</b><small>De-puff, release and define</small></span><Icon name="arrow" class="go" /></a>
+          <a href="/facial-massage/buccal-massage/"><span class="qi"><Icon name="micro" /></span><span><b>Buccal massage</b><small>Deep sculpting of the cheeks and jaw</small></span><Icon name="arrow" class="go" /></a>
+          <a href="/facial-massage/"><span class="qi"><Icon name="spark" /></span><span><b>All facial massage</b><small>Six techniques and signature pairings</small></span><Icon name="arrow" class="go" /></a>
+        </nav>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skin quiz teaser -->
+  <section class="band quizband" aria-labelledby="quiz-title">
+    <div class="wrap">
+      <div>
+        <p class="eyebrow">Skin quiz</p>
+        <h2 id="quiz-title" data-split>Find your facial in 30 seconds.</h2>
+        <div data-reveal class="mt-s"><p class="lede">Tap what you would love to change and get a personal match, with timings and prices.</p></div>
+      </div>
+      <div class="goals" data-reveal>
+        {goals.map((g) => (
+          <a class="goal" href={`/skin-quiz/?goal=${g.id}`} data-goal={g.id}>
+            <span class="bub"><Icon name={g.icon ?? 'spark'} /></span>
+            <span><b>{g.label}</b><small>{g.hint}</small></span>
+            <Icon name="arrow" class="go" />
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section class="sec" aria-labelledby="about-title">
+    <div class="wrap split">
+      <Pic name="portrait-1" alt={`${SITE.owner}, licensed cosmetologist and founder of Timeless Beauty Lab`} class="arch ratio-45" parallax sizes="(max-width: 900px) 92vw, 45vw" />
+      <div>
+        <p class="eyebrow">Meet {SITE.owner}</p>
+        <h2 id="about-title" data-split>Eight years of caring for skin, one client at a time.</h2>
+        <div data-reveal class="mt-s">
+          <p class="body-2">{SITE.owner} is a licensed cosmetologist who has spent eight years perfecting non-invasive, results-driven facials. She keeps learning, from advanced device training to international shows like IBS New York, and brings the best of it back to a calm, private suite in Jersey City, where every treatment is planned around your skin on the day.</p>
+        </div>
+        <div class="counts">
+          <div><b data-count={SITE.yearsExperience}>{SITE.yearsExperience}</b><span>Years of experience</span></div>
+          <div><b data-count={BOOKABLE.length}>{BOOKABLE.length}</b><span>Treatments on the menu</span></div>
+          <div><b data-count={TECH.length}>{TECH.length}</b><span>Professional technologies</span></div>
+        </div>
+        <a class="link mt-m" href="/about/"><span>More about {SITE.owner}</span><Icon name="arrow" /></a>
+      </div>
+    </div>
+  </section>
+
+  {REVIEWS.length > 0 && (
+    <section class="sec tint" aria-labelledby="reviews-title">
+      <div class="wrap">
+        <div class="sec-head">
+          <div><p class="eyebrow">Kind words</p><h2 id="reviews-title" data-split>What clients say.</h2></div>
+        </div>
+        <div class="rgrid" data-reveal>
+          {REVIEWS.map((r) => (
+            <figure class="review">
+              <blockquote><p>“{r.quote}”</p></blockquote>
+              <figcaption><cite>{r.name} · {r.treatment}</cite></figcaption>
+            </figure>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Visit -->
+  <section class="sec" aria-labelledby="visit-title">
+    <div class="wrap">
+      <div class="visit-card">
+        <Pic name="studio-2" alt="The warmly lit, private treatment suite at Timeless Beauty Lab in Jersey City" sizes="(max-width: 860px) 92vw, 45vw" />
+        <div class="body">
+          <div>
+            <p class="eyebrow">Visit the studio</p>
+            <h2 id="visit-title" data-split>A private suite on Washington Boulevard.</h2>
+          </div>
+          <dl class="facts">
+            <div><dt>Address</dt><dd><a href={SITE.mapsUrl} target="_blank" rel="noopener">{SITE.address.street}<br />{SITE.address.city}, {SITE.address.region} {SITE.address.postalCode}</a></dd></div>
+            <div><dt>Inside</dt><dd>{SITE.address.building}</dd></div>
+            <div><dt>Phone</dt><dd><a href={`tel:${SITE.phone}`}>{SITE.phoneDisplay}</a></dd></div>
+            <div><dt>Hours</dt><dd>{SITE.hours || 'By appointment'}</dd></div>
+          </dl>
+          <div class="btns">
+            <a class="btn btn-primary" href={SITE.mapsUrl} target="_blank" rel="noopener"><Icon name="pin" /><span>Get directions</span></a>
+            <a class="link" href={`tel:${SITE.phone}`}><Icon name="phone" /><span>Call or text</span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="sec tint" aria-labelledby="faq-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <p class="eyebrow">Questions</p>
+          <h2 id="faq-title" data-split>Good to know before your visit.</h2>
+        </div>
+        <div class="side" data-reveal>
+          <p class="body-2">Everything about downtime, preparation and choosing your first treatment.</p>
+          <a class="link" href="/faq/"><span>All questions</span><Icon name="arrow" /></a>
+        </div>
+      </div>
+      <Faq items={FAQ_GENERAL.slice(0, 5)} />
+    </div>
+  </section>
+
+  <!-- Instagram -->
+  <section class="sec-tight" aria-labelledby="ig-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <p class="eyebrow">Instagram</p>
+          <h2 id="ig-title" data-split>Follow the glow.</h2>
+        </div>
+        <div class="side" data-reveal>
+          <p class="body-2">Fresh results, treatment videos and studio moments.</p>
+          <a class="link" href={SITE.instagram} target="_blank" rel="noopener"><span>{SITE.instagramHandle}</span><Icon name="arrow" /></a>
+        </div>
+      </div>
+      <div class="iggrid">
+        {ig.map((n) => (
+          <a href={SITE.instagram} target="_blank" rel="noopener" class="zoom" data-cursor="Open">
+            <Pic name={n} alt="A treatment moment from Timeless Beauty Lab on Instagram" sizes="(max-width: 760px) 33vw, 16vw" widths={[240, 480]} />
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CtaBand />
+</Base>

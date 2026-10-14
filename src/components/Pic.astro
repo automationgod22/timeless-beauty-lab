@@ -1,0 +1,16 @@
+---
+import { Image } from 'astro:assets';
+import { img } from '../data/images';
+interface Props {
+  name: string; alt: string; class?: string; sizes?: string; eager?: boolean; vt?: string;
+  parallax?: boolean; clip?: boolean; cursor?: string; widths?: number[];
+}
+const { name, alt, class: cls = '', sizes = '(max-width: 760px) 100vw, 50vw', eager = false, vt, parallax = false, clip = false, cursor, widths = [480, 820] } = Astro.props;
+const src = img(name);
+const w = widths.filter((x) => x <= src.width);
+if (!w.length) w.push(src.width);
+---
+<figure class={`pic ${cls}`} style={vt ? `view-transition-name: ${vt}` : undefined} data-parallax={parallax ? '' : undefined} data-clip={clip ? '' : undefined} data-cursor={cursor}>
+  <Image src={src} alt={alt} widths={w} sizes={sizes} loading={eager ? 'eager' : 'lazy'} decoding="async" fetchpriority={eager ? 'high' : 'auto'} format="webp" quality={80} />
+  <slot />
+</figure>

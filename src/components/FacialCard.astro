@@ -1,0 +1,18 @@
+---
+import Pic from './Pic.astro';
+import Icon from './Icon.astro';
+import { priceLabel, type Facial } from '../data/content';
+interface Props { f: Facial; class?: string; sizes?: string; vt?: boolean }
+const { f, class: cls = '', sizes = '(max-width: 600px) 90vw, (max-width: 980px) 45vw, 30vw', vt = true } = Astro.props;
+---
+<a class={`fcard zoom ${cls}`} href={`/facials/${f.slug}/`} data-astro-prefetch data-cursor="View">
+  <Pic name={f.img} alt={f.imgAlt} sizes={sizes} vt={vt ? `facial-${f.slug}` : undefined}>
+    {f.flag && <span class="tag">{f.flag}</span>}
+  </Pic>
+  <h3>{f.name}</h3>
+  <p>{f.tagline}</p>
+  <div class="meta">
+    <span class={`price ${f.price ? '' : 'req'}`}>{priceLabel(f.price)}</span>
+    <span class="mins">{f.minutes}</span>
+  </div>
+</a>

@@ -1,0 +1,64 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Pic from '../components/Pic.astro';
+import BeforeAfter from '../components/BeforeAfter.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { BA, GALLERY } from '../data/content';
+import { breadcrumbs } from '../data/schema';
+
+const site = Astro.site!;
+const crumbs: [string, string][] = [['Home', '/'], ['Results', '/results/']];
+---
+<Base
+  title="Before & After Results | Facials, Peels & Facial Massage in Jersey City"
+  description="Real before and after photos from Timeless Beauty Lab in Jersey City: lymphatic drainage and buccal massage, LET Eye Peel, ESABIOPEEL and facial sculpting results."
+  og="results"
+  jsonLd={[breadcrumbs(site, crumbs)]}
+>
+  <PageHero
+    crumbs={crumbs}
+    eyebrow="Real results"
+    title="Before and after"
+    lede="Results from clients of Timeless Beauty Lab. Scroll, or drag any slider, to compare."
+  />
+
+  <section class="sec" aria-labelledby="compare-title">
+    <div class="wrap">
+      <h2 id="compare-title" class="sr-only">Interactive before and after comparisons</h2>
+      <div class="bagrid">
+        {BA.map((b) => (
+          <div class="bacard" data-reveal>
+            <BeforeAfter n={b.n} title={b.title} scroll />
+            <p class="cap"><b>{b.title}</b><span>{b.note}</span></p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="sec tint" aria-labelledby="gallery-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <p class="eyebrow">Gallery</p>
+          <h2 id="gallery-title" data-split>More from the studio.</h2>
+        </div>
+        <div class="side" data-reveal>
+          <p class="body-2">Facial massage programs, sculpting sessions and peels. Each photo notes the treatment and how many sessions it took.</p>
+        </div>
+      </div>
+      <div class="rgal">
+        {GALLERY.map((g) => (
+          <figure data-reveal>
+            <Pic name={g.img} alt={`Before and after: ${g.title}, ${g.note.toLowerCase()}`} sizes="(max-width: 560px) 92vw, (max-width: 900px) 45vw, 30vw" />
+            <figcaption class="cap"><b>{g.title}</b><span>{g.note}</span></figcaption>
+          </figure>
+        ))}
+      </div>
+      <p class="note mt-l">Every photo shows a client of Timeless Beauty Lab. Results vary from person to person, and the right plan for your skin is discussed at your consultation.</p>
+    </div>
+  </section>
+
+  <CtaBand title="Your before and after starts here." />
+</Base>

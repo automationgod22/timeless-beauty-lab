@@ -1,5 +1,6 @@
 ---
 import Crumbs from './Crumbs.astro';
+import { emph } from '../utils/emph';
 interface Props { crumbs: [string, string][]; title: string; lede?: string; eyebrow?: string; compact?: boolean }
 const { crumbs, title, lede, eyebrow, compact = false } = Astro.props;
 ---
@@ -7,7 +8,7 @@ const { crumbs, title, lede, eyebrow, compact = false } = Astro.props;
   <div class="wrap">
     <Crumbs items={crumbs} />
     {eyebrow && <p class="eyebrow">{eyebrow}</p>}
-    <h1 data-split="load">{title}</h1>
+    <h1 data-split="load" set:html={emph(title)} />
     {lede && <div data-reveal><p class="lede">{lede}</p></div>}
     <slot />
   </div>

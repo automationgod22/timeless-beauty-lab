@@ -30,7 +30,7 @@ const description =
   <PageHero
     crumbs={crumbs}
     eyebrow="Professional peels"
-    title="Professional peels in Jersey City"
+    title="Professional peels *in Jersey City*"
     lede="Biorevitalizing and classic peels that renew, refine and brighten, chosen for your skin, your goals and the season."
   />
 
@@ -41,7 +41,7 @@ const description =
       </div>
       <div>
         <p class="eyebrow">The peel menu</p>
-        <h2 id="menu-title" data-split>Five peels, each with a purpose.</h2>
+        <h2 id="menu-title" data-split>Five peels, <em>each with a purpose.</em></h2>
         <ul class="plist mt-m">
           {PEELS.map((p) => (
             <li>
@@ -64,7 +64,7 @@ const description =
     <div class="wrap split">
       <div>
         <p class="eyebrow">Your visit</p>
-        <h2 id="visit-title" data-split>How a peel appointment works.</h2>
+        <h2 id="visit-title" data-split>How a peel appointment <em>works.</em></h2>
         <div data-reveal class="mt-s">
           <p class="body-2">Every peel starts with a short consultation, so the right peel and strength are chosen for your skin on the day. Most peels leave little or no visible peeling, and you always know what to expect before you begin.</p>
         </div>
@@ -78,7 +78,7 @@ const description =
       <div class="sec-head">
         <div>
           <p class="eyebrow">Peel results</p>
-          <h2 id="results-title" data-split>Smoother, brighter, more even.</h2>
+          <h2 id="results-title" data-split>Smoother, brighter, <em>more even.</em></h2>
         </div>
         <div class="side" data-reveal>
           <p class="body-2">Scroll, or drag the slider, to compare. Individual results vary.</p>
@@ -109,12 +109,12 @@ const description =
       <div class="sec-head">
         <div>
           <p class="eyebrow">Questions</p>
-          <h2 id="faq-title" data-split>About peels.</h2>
+          <h2 id="faq-title" data-split>About <em>peels.</em></h2>
         </div>
       </div>
       <Faq items={FAQ_PEELS} />
     </div>
   </section>
 
-  <CtaBand title="Ready for fresh, renewed skin?" text="Book a peel, or message the studio and Tatiana will recommend the right one for your skin." />
+  <CtaBand title="Ready for fresh, *renewed skin?*" text="Book a peel, or message the studio and Tatiana will recommend the right one for your skin." />
 </Base>

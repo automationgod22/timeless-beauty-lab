@@ -38,7 +38,7 @@ const values = [
   <PageHero
     crumbs={crumbs}
     eyebrow="About"
-    title={`Meet ${SITE.owner}`}
+    title={`Meet *${SITE.owner}*`}
     lede={`Licensed cosmetologist, eight years in skin, and the hands behind every treatment at ${SITE.name}.`}
   />
 
@@ -47,7 +47,7 @@ const values = [
       <Pic name="portrait-1" alt={`${SITE.owner}, founder of ${SITE.name}`} class="arch ratio-45" parallax eager sizes="(max-width: 900px) 92vw, 45vw" />
       <div>
         <p class="eyebrow">The story</p>
-        <h2 id="story-title" data-split>Results-driven. Never rushed.</h2>
+        <h2 id="story-title" data-split>Results-driven. <em>Never rushed.</em></h2>
         <div class="prose mt-s" data-reveal>
           <p>{SITE.owner} is a licensed cosmetologist with eight years of experience in professional skincare. She opened {SITE.name} to offer something she believes every client deserves: advanced, non-invasive treatments with visible results, in a space that feels calm and personal.</p>
           <p>Every visit starts with your skin, not a script. {SITE.owner} combines professional technology, from HydroFacial and microcurrent to RF tightening and carboxytherapy, with skilled, sculpting hands, and adjusts each step to how your skin looks and feels on the day.</p>
@@ -66,7 +66,7 @@ const values = [
       <div class="sec-head">
         <div>
           <p class="eyebrow">What you can expect</p>
-          <h2 id="values-title" data-split>Three promises, every visit.</h2>
+          <h2 id="values-title" data-split>Three promises, <em>every visit.</em></h2>
         </div>
       </div>
       <div class="values" data-reveal>
@@ -86,7 +86,7 @@ const values = [
       <Pic name="portrait-2" alt={`${SITE.owner} at the International Beauty Show in New York`} class="round ratio-45" parallax sizes="(max-width: 900px) 92vw, 45vw" />
       <div>
         <p class="eyebrow">Always learning</p>
-        <h2 id="learning-title" data-split>From IBS New York back to your treatment.</h2>
+        <h2 id="learning-title" data-split>From IBS New York <em>back to your treatment.</em></h2>
         <div class="prose mt-s" data-reveal>
           <p>{SITE.owner} keeps up with what is new in professional skincare, from advanced device training to international events like the International Beauty Show in New York.</p>
           <p>Only what works makes it into the treatment room, so every facial on the menu is one she trusts for her own clients.</p>
@@ -100,7 +100,7 @@ const values = [
       <div class="sec-head">
         <div>
           <p class="eyebrow">The studio</p>
-          <h2 id="studio-title" data-split>A private suite in Jersey City.</h2>
+          <h2 id="studio-title" data-split>A private suite <em>in Jersey City.</em></h2>
         </div>
         <div class="side" data-reveal>
           <p class="body-2">Suite 113 at {SITE.address.building}, {SITE.address.street.split(',')[0]}. Quiet, warm and fully private: one client at a time.</p>
@@ -115,5 +115,5 @@ const values = [
     </div>
   </section>
 
-  <CtaBand title={`Meet ${SITE.owner} in person.`} />
+  <CtaBand title={`Meet ${SITE.owner} *in person.*`} />
 </Base>

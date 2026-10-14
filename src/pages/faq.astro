@@ -14,14 +14,14 @@ const crumbs: [string, string][] = [['Home', '/'], ['FAQ', '/faq/']];
   description="Answers about downtime, preparation, peels, how often to come and how to book at Timeless Beauty Lab, a private facial studio in Jersey City, NJ."
   jsonLd={[faqPage([...FAQ_GENERAL, ...FAQ_PEELS]), breadcrumbs(site, crumbs)]}
 >
-  <PageHero crumbs={crumbs} eyebrow="Questions" title="Frequently asked questions" lede="Everything about your visit, from choosing a treatment to aftercare. Still wondering? Send a message and Tatiana will answer personally." />
+  <PageHero crumbs={crumbs} eyebrow="Questions" title="Frequently asked *questions*" lede="Everything about your visit, from choosing a treatment to aftercare. Still wondering? Send a message and Tatiana will answer personally." />
 
   <section class="sec" aria-labelledby="general-title">
     <div class="wrap">
       <div class="sec-head">
         <div>
           <p class="eyebrow">Your visit</p>
-          <h2 id="general-title" data-split>Treatments and visits.</h2>
+          <h2 id="general-title" data-split>Treatments <em>and visits.</em></h2>
         </div>
       </div>
       <Faq items={FAQ_GENERAL} />
@@ -33,12 +33,12 @@ const crumbs: [string, string][] = [['Home', '/'], ['FAQ', '/faq/']];
       <div class="sec-head">
         <div>
           <p class="eyebrow">Peels</p>
-          <h2 id="peels-title" data-split>About professional peels.</h2>
+          <h2 id="peels-title" data-split>About professional <em>peels.</em></h2>
         </div>
       </div>
       <Faq items={FAQ_PEELS} />
     </div>
   </section>
 
-  <CtaBand title="Still have a question?" text="Message the studio on WhatsApp or Instagram, or book your visit online." />
+  <CtaBand title="Still have *a question?*" text="Message the studio on WhatsApp or Instagram, or book your visit online." />
 </Base>

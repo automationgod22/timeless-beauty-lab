@@ -31,18 +31,33 @@ const ig = ['ig-1', 'ig-4', 'ig-5', 'ig-6', 'ig-3', 'hero'];
   jsonLd={[business(site), website]}
   preloadImage="/video/hero-poster.webp"
 >
-  <!-- Hero -->
-  <section class="hero-top">
+  <!-- Hero: the name, the promise, then the film -->
+  <section class="hero" data-hero>
     <div class="wrap">
-      <p class="eyebrow">Timeless Beauty Lab · Jersey City, NJ</p>
-      <h1 class="d1" data-split="load">Advanced facials for skin that looks lit from within.</h1>
-      <div class="hero-meta">
-        <div data-reveal>
-          <p class="lede">HydroFacial, microcurrent, RF tightening, professional peels and sculpting facial massage, by licensed cosmetologist {SITE.owner} in a calm, private suite.</p>
+      <div class="hero-kicker">
+        <span class="label">Jersey City, New Jersey</span>
+        <span class="label">Advanced facials · Peels · Facial sculpting</span>
+        <span class="label">By appointment</span>
+      </div>
+      <p class="wordmark" aria-hidden="true">{'Timeless'.split('').map((c, i) => <span class="ch"><span class="ci" style={`--i:${i}`}>{c}</span></span>)}</p>
+      <div class="hero-sub">
+        <span class="label">Beauty Lab</span>
+        <div class="seal" aria-hidden="true">
+          <svg class="ring" viewBox="0 0 100 100">
+            <defs><path id="seal-ring" d="M50,50 m-40,0 a40,40 0 1,1 80,0 a40,40 0 1,1 -80,0" /></defs>
+            <text><textPath href="#seal-ring" textLength="248" lengthAdjust="spacing">Licensed cosmetologist · {SITE.yearsExperience} years · Jersey City ·</textPath></text>
+          </svg>
+          <span class="core">T</span>
         </div>
-        <div class="btns" data-reveal>
-          <a class="btn btn-primary" href="/book/" data-magnetic><span>Book an appointment</span></a>
-          <a class="link" href="/skin-quiz/"><span>Take the skin quiz</span><Icon name="arrow" /></a>
+      </div>
+      <div class="hero-foot">
+        <h1 class="hero-h1">Advanced facials for skin that looks <span class="hl"><em>lit from within</em><svg viewBox="0 0 300 20" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M4 13 C 60 5, 118 4, 168 9 S 258 17, 296 6" /></svg></span>.</h1>
+        <div class="hero-side">
+          <p class="lede">HydroFacial, microcurrent, RF tightening, professional peels and sculpting facial massage, by licensed cosmetologist {SITE.owner} in a calm, private suite.</p>
+          <div class="btns">
+            <a class="btn btn-primary" href="/book/" data-magnetic><span>Book an appointment</span></a>
+            <a class="link" href="/skin-quiz/"><span>Take the skin quiz</span><Icon name="arrow" /></a>
+          </div>
         </div>
       </div>
     </div>
@@ -61,7 +76,7 @@ const ig = ['ig-1', 'ig-4', 'ig-5', 'ig-6', 'ig-3', 'hero'];
     </div>
     <div class="stage-over">
       <div class="inner">
-        <h2><span>One private suite.</span> <span>One client at a time.</span></h2>
+        <h2><span>One private suite.</span> <span><em>One client at a time.</em></span></h2>
         <ul>
           <li><Icon name="check" />Non-invasive: no needles, no fillers</li>
           <li><Icon name="check" />Licensed cosmetologist, {SITE.yearsExperience} years of experience</li>
@@ -75,30 +90,39 @@ const ig = ['ig-1', 'ig-4', 'ig-5', 'ig-6', 'ig-3', 'hero'];
   <section class="sec statement">
     <div class="wrap">
       <p class="eyebrow">The approach</p>
-      <p data-words>Every visit begins with your skin, not a script. Advanced devices and skilled, sculpting hands work together for results you can see in the mirror, without a single needle.</p>
+      <p data-words>Every visit begins with <em>your skin</em>, not a script. Advanced devices and skilled, sculpting hands work together for results you can see in the mirror, <em>without a single needle.</em></p>
     </div>
   </section>
 
   <!-- Signature facials: horizontal rail -->
   <section class="hscroll" data-hscroll aria-labelledby="facials-title">
+    <p class="h-ghost" aria-hidden="true">Signature rituals</p>
     <div class="h-viewport">
       <div class="h-track">
         <div class="h-intro">
-          <p class="eyebrow">Signature facials</p>
-          <h2 id="facials-title">Seven rituals, each built for a result.</h2>
+          <p class="eyebrow">The facial collection</p>
+          <h2 id="facials-title" data-split>Seven rituals, each built <em>for a result.</em></h2>
           <p class="body-2">From a 60-minute express glow to a two-hour sculpting ritual. Every price shown is a starting price.</p>
-          <a class="link" href="/facials/"><span>Compare all facials</span><Icon name="arrow" /></a>
+          <div class="h-intro-foot">
+            <a class="btn btn-ghost btn-sm" href="/facials/"><span>Compare all facials</span></a>
+            <span class="label on-desk">Scroll to explore</span>
+            <span class="label on-mob">Swipe to explore</span>
+          </div>
         </div>
-        {FACIALS.map((f) => <FacialCard f={f} class="h-card" sizes="(max-width: 899px) 78vw, 26vw" />)}
+        {FACIALS.map((f, i) => <FacialCard f={f} n={i + 1} class="h-card" sizes="(max-width: 899px) 78vw, 25vw" />)}
         <div class="h-end">
           <Icon name="spark" />
-          <h3>Not sure which one?</h3>
+          <h3>Not sure <em>which one?</em></h3>
           <p>Answer four quick questions and get your personal match in about 30 seconds.</p>
           <a class="btn btn-band" href="/skin-quiz/" data-magnetic><span>Take the skin quiz</span></a>
         </div>
       </div>
     </div>
-    <div class="h-progress" aria-hidden="true"><span><i></i></span></div>
+    <div class="h-progress" aria-hidden="true">
+      <span class="h-count"><b>01</b> <small>/ {String(FACIALS.length).padStart(2, '0')}</small></span>
+      <span class="h-bar"><i></i></span>
+      <span class="label">Scroll</span>
+    </div>
   </section>
 
   <!-- Technology: stacking cards -->
@@ -107,7 +131,7 @@ const ig = ['ig-1', 'ig-4', 'ig-5', 'ig-6', 'ig-3', 'hero'];
       <div class="sec-head">
         <div>
           <p class="eyebrow">The technology</p>
-          <h2 id="tech-title" data-split>Six professional technologies. One expert pair of hands.</h2>
+          <h2 id="tech-title" data-split>Six professional technologies. <em>One expert pair of hands.</em></h2>
         </div>
         <div class="side" data-reveal>
           <p class="lede">Every facial layers the right devices for your skin on the day. Here is what each one does, and what you will notice.</p>
@@ -135,7 +159,7 @@ const ig = ['ig-1', 'ig-4', 'ig-5', 'ig-6', 'ig-3', 'hero'];
       <div class="sec-head">
         <div>
           <p class="eyebrow">Real results</p>
-          <h2 id="results-title" data-split>Before and after, straight from the studio.</h2>
+          <h2 id="results-title" data-split>Before and after, <em>straight from the studio.</em></h2>
         </div>
         <div class="side" data-reveal>
           <p class="body-2">Scroll, or drag the slider, to compare. Every photo is a client of Timeless Beauty Lab. Individual results vary.</p>
@@ -166,7 +190,7 @@ const ig = ['ig-1', 'ig-4', 'ig-5', 'ig-6', 'ig-3', 'hero'];
       <Pic name="peels" alt="LET Eye Peel by Aesthetical, one of the professional peels at Timeless Beauty Lab" class="arch ratio-45" parallax sizes="(max-width: 900px) 92vw, 45vw" />
       <div>
         <p class="eyebrow">Professional peels</p>
-        <h2 id="peels-title" data-split>Peels that renew, refine and brighten.</h2>
+        <h2 id="peels-title" data-split>Peels that renew, refine <em>and brighten.</em></h2>
         <div data-reveal class="mt-s"><p class="lede">Biorevitalizing and classic peels by professional brands, chosen for your skin, your goals and the season.</p></div>
         <ul class="plist mt-m">
           {peels.map((p) => (
@@ -185,14 +209,14 @@ const ig = ['ig-1', 'ig-4', 'ig-5', 'ig-6', 'ig-3', 'hero'];
   <!-- Facial massage -->
   <section class="sec" aria-labelledby="massage-title">
     <div class="wrap split rev">
-      <figure class="pic round ratio-45" data-clip>
+      <figure class="pic round ratio-45">
         <video muted loop playsinline preload="none" poster="/video/massage-poster.webp" data-autoplay disablepictureinpicture aria-hidden="true">
           <source src="/video/massage.mp4" type="video/mp4" />
         </video>
       </figure>
       <div>
         <p class="eyebrow">Facial massage</p>
-        <h2 id="massage-title" data-split>Hands that sculpt.</h2>
+        <h2 id="massage-title" data-split>Hands that <em>sculpt.</em></h2>
         <div data-reveal class="mt-s"><p class="lede">Lymphatic drainage, buccal and myofascial massage de-puff, release tension and define the contour, often visibly after a single session.</p></div>
         <nav class="quick mt-m" aria-label="Facial massage treatments">
           <a href="/facial-massage/lymphatic-drainage-facial/"><span class="qi"><Icon name="hands" /></span><span><b>Lymphatic drainage facial</b><small>De-puff, release and define</small></span><Icon name="arrow" class="go" /></a>
@@ -208,7 +232,7 @@ const ig = ['ig-1', 'ig-4', 'ig-5', 'ig-6', 'ig-3', 'hero'];
     <div class="wrap">
       <div>
         <p class="eyebrow">Skin quiz</p>
-        <h2 id="quiz-title" data-split>Find your facial in 30 seconds.</h2>
+        <h2 id="quiz-title" data-split>Find your facial <em>in 30 seconds.</em></h2>
         <div data-reveal class="mt-s"><p class="lede">Tap what you would love to change and get a personal match, with timings and prices.</p></div>
       </div>
       <div class="goals" data-reveal>
@@ -229,7 +253,7 @@ const ig = ['ig-1', 'ig-4', 'ig-5', 'ig-6', 'ig-3', 'hero'];
       <Pic name="portrait-1" alt={`${SITE.owner}, licensed cosmetologist and founder of Timeless Beauty Lab`} class="arch ratio-45" parallax sizes="(max-width: 900px) 92vw, 45vw" />
       <div>
         <p class="eyebrow">Meet {SITE.owner}</p>
-        <h2 id="about-title" data-split>Eight years of caring for skin, one client at a time.</h2>
+        <h2 id="about-title" data-split>Eight years of caring for skin, <em>one client at a time.</em></h2>
         <div data-reveal class="mt-s">
           <p class="body-2">{SITE.owner} is a licensed cosmetologist who has spent eight years perfecting non-invasive, results-driven facials. She keeps learning, from advanced device training to international shows like IBS New York, and brings the best of it back to a calm, private suite in Jersey City, where every treatment is planned around your skin on the day.</p>
         </div>
@@ -247,7 +271,7 @@ const ig = ['ig-1', 'ig-4', 'ig-5', 'ig-6', 'ig-3', 'hero'];
     <section class="sec tint" aria-labelledby="reviews-title">
       <div class="wrap">
         <div class="sec-head">
-          <div><p class="eyebrow">Kind words</p><h2 id="reviews-title" data-split>What clients say.</h2></div>
+          <div><p class="eyebrow">Kind words</p><h2 id="reviews-title" data-split>What clients <em>say.</em></h2></div>
         </div>
         <div class="rgrid" data-reveal>
           {REVIEWS.map((r) => (
@@ -269,7 +293,7 @@ const ig = ['ig-1', 'ig-4', 'ig-5', 'ig-6', 'ig-3', 'hero'];
         <div class="body">
           <div>
             <p class="eyebrow">Visit the studio</p>
-            <h2 id="visit-title" data-split>A private suite on Washington Boulevard.</h2>
+            <h2 id="visit-title" data-split>A private suite on <em>Washington Boulevard.</em></h2>
           </div>
           <dl class="facts">
             <div><dt>Address</dt><dd><a href={SITE.mapsUrl} target="_blank" rel="noopener">{SITE.address.street}<br />{SITE.address.city}, {SITE.address.region} {SITE.address.postalCode}</a></dd></div>
@@ -292,7 +316,7 @@ const ig = ['ig-1', 'ig-4', 'ig-5', 'ig-6', 'ig-3', 'hero'];
       <div class="sec-head">
         <div>
           <p class="eyebrow">Questions</p>
-          <h2 id="faq-title" data-split>Good to know before your visit.</h2>
+          <h2 id="faq-title" data-split>Good to know <em>before your visit.</em></h2>
         </div>
         <div class="side" data-reveal>
           <p class="body-2">Everything about downtime, preparation and choosing your first treatment.</p>
@@ -309,7 +333,7 @@ const ig = ['ig-1', 'ig-4', 'ig-5', 'ig-6', 'ig-3', 'hero'];
       <div class="sec-head">
         <div>
           <p class="eyebrow">Instagram</p>
-          <h2 id="ig-title" data-split>Follow the glow.</h2>
+          <h2 id="ig-title" data-split>Follow <em>the glow.</em></h2>
         </div>
         <div class="side" data-reveal>
           <p class="body-2">Fresh results, treatment videos and studio moments.</p>

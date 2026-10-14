@@ -1,9 +1,10 @@
 ---
 import Icon from './Icon.astro';
 import { waLink } from '../data/site';
+import { emph } from '../utils/emph';
 interface Props { title?: string; text?: string; treatment?: string; treatmentName?: string }
 const {
-  title = 'Ready for your glow?',
+  title = 'Ready for *your glow?*',
   text = 'Book your visit online, or message the studio for a personal treatment recommendation.',
   treatment,
   treatmentName,
@@ -15,7 +16,7 @@ const msg = treatmentName ? `Hi! I'd like to book the ${treatmentName} at Timele
   <div class="wrap">
     <div data-reveal>
       <p class="eyebrow">Timeless Beauty Lab, Jersey City</p>
-      <h2>{title}</h2>
+      <h2 set:html={emph(title)} />
       <p class="lede" style="margin-top:22px">{text}</p>
     </div>
     <div class="btns" data-reveal>

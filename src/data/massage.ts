@@ -24,7 +24,7 @@ export const MASSAGE_PAGES: MassagePage[] = [
   {
     slug: 'lymphatic-drainage-facial',
     name: 'Lymphatic drainage facial massage',
-    h1: 'Lymphatic drainage facial massage',
+    h1: 'Lymphatic drainage *facial massage*',
     eyebrow: 'Facial massage',
     lede: 'Slow, rhythmic, hands-on drainage that de-puffs the face, releases tension and brings back a defined contour, often visible after a single session.',
     img: 'massage',
@@ -55,7 +55,7 @@ export const MASSAGE_PAGES: MassagePage[] = [
   {
     slug: 'buccal-massage',
     name: 'Buccal massage',
-    h1: 'Buccal facial massage',
+    h1: 'Buccal *facial massage*',
     eyebrow: 'Facial sculpting',
     lede: 'A sculpting massage performed partly from inside the mouth, to reach the deep muscles of the cheeks and jaw that ordinary facials cannot.',
     img: 'massage-2',

@@ -26,14 +26,15 @@ const itemList = {
   <PageHero
     crumbs={crumbs}
     eyebrow="Signature facials"
-    title="Advanced facials in Jersey City"
+    title="Advanced facials *in Jersey City*"
     lede="Seven non-invasive rituals that pair professional technology with skilled, sculpting hands. Every price shown is a starting price, confirmed at your consultation."
   />
 
-  <section class="sec">
+  <section class="sec" aria-labelledby="all-title">
     <div class="wrap">
+      <h2 id="all-title" class="sr-only">All signature facials</h2>
       <div class="fgrid">
-        {FACIALS.map((f) => <FacialCard f={f} />)}
+        {FACIALS.map((f, i) => <FacialCard f={f} n={i + 1} />)}
       </div>
     </div>
   </section>
@@ -43,7 +44,7 @@ const itemList = {
       <div class="sec-head">
         <div>
           <p class="eyebrow">Compare</p>
-          <h2 id="compare-title" data-split>Which facial is right for you?</h2>
+          <h2 id="compare-title" data-split>Which facial is <em>right for you?</em></h2>
         </div>
         <div class="side" data-reveal>
           <p class="body-2">Timings, technologies and what each facial does best, side by side. Still unsure? The skin quiz takes about 30 seconds.</p>
@@ -75,7 +76,7 @@ const itemList = {
       <div class="sec-head">
         <div>
           <p class="eyebrow">Questions</p>
-          <h2 id="faq-title" data-split>Before your first facial.</h2>
+          <h2 id="faq-title" data-split>Before your <em>first facial.</em></h2>
         </div>
         <div class="side" data-reveal>
           <a class="link" href="/faq/"><span>All questions</span><Icon name="arrow" /></a>

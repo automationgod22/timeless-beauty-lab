@@ -77,7 +77,7 @@ const expect = [
       <div class="sec-head">
         <div>
           <p class="eyebrow">Your visit</p>
-          <h2 id="visit-title" data-split>What to expect.</h2>
+          <h2 id="visit-title" data-split>What to <em>expect.</em></h2>
         </div>
       </div>
       <Expect items={expect} />
@@ -89,7 +89,7 @@ const expect = [
       <div class="sec-head">
         <div>
           <p class="eyebrow">Questions</p>
-          <h2 id="faq-title" data-split>About the {f.name}.</h2>
+          <h2 id="faq-title" data-split>About the <em>{f.name}.</em></h2>
         </div>
       </div>
       <Faq items={f.faqs} />
@@ -101,17 +101,17 @@ const expect = [
       <div class="sec-head">
         <div>
           <p class="eyebrow">You may also love</p>
-          <h2 id="more-title" data-split>More signature facials.</h2>
+          <h2 id="more-title" data-split>More signature <em>facials.</em></h2>
         </div>
         <div class="side" data-reveal>
           <a class="link" href="/facials/"><span>Compare all facials</span><Icon name="arrow" /></a>
         </div>
       </div>
       <div class="fgrid">
-        {related.map((r) => <FacialCard f={r} />)}
+        {related.map((r) => <FacialCard f={r} n={FACIALS.indexOf(r) + 1} />)}
       </div>
     </div>
   </section>
 
-  <CtaBand title={`Ready for your ${f.name}?`} treatment={f.slug} treatmentName={f.name} />
+  <CtaBand title={`Ready for your *${f.name}?*`} treatment={f.slug} treatmentName={f.name} />
 </Base>

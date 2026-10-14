@@ -11,6 +11,7 @@ import { MASSAGE_PAGES, type MassagePage } from '../../data/massage';
 import { BOOKABLE, GALLERY, FACIALS, priceLabel } from '../../data/content';
 import { waLink } from '../../data/site';
 import { simpleService, breadcrumbs, faqPage } from '../../data/schema';
+import { emph, plain } from '../../utils/emph';
 
 export function getStaticPaths() {
   return MASSAGE_PAGES.map((m) => ({ params: { slug: m.slug }, props: { m } }));
@@ -37,7 +38,7 @@ const visit = m.visit.map((s, i) => ({ k: `Step ${i + 1}`, title: s.name, text: 
         </div>
         <div>
           <p class="flag">{m.eyebrow}</p>
-          <h1 data-split="load">{m.h1}</h1>
+          <h1 data-split="load" set:html={emph(m.h1)} />
           <div data-reveal><p class="lede">{m.lede}</p></div>
           <div class="price-row" data-reveal>
             <span class:list={['price', { req: !book?.price }]}>{priceLabel(book?.price)}</span>
@@ -71,7 +72,7 @@ const visit = m.visit.map((s, i) => ({ k: `Step ${i + 1}`, title: s.name, text: 
       <div class="sec-head">
         <div>
           <p class="eyebrow">Your session</p>
-          <h2 id="visit-title" data-split>What to expect.</h2>
+          <h2 id="visit-title" data-split>What to <em>expect.</em></h2>
         </div>
       </div>
       <Expect items={visit} />
@@ -84,7 +85,7 @@ const visit = m.visit.map((s, i) => ({ k: `Step ${i + 1}`, title: s.name, text: 
         <div class="sec-head">
           <div>
             <p class="eyebrow">Results</p>
-            <h2 id="results-title" data-split>Before and after.</h2>
+            <h2 id="results-title" data-split>Before <em>and after.</em></h2>
           </div>
           <div class="side" data-reveal>
             <p class="body-2">Clients of Timeless Beauty Lab. Individual results vary.</p>
@@ -120,13 +121,13 @@ const visit = m.visit.map((s, i) => ({ k: `Step ${i + 1}`, title: s.name, text: 
       <div class="sec-head">
         <div>
           <p class="eyebrow">Pairs well with</p>
-          <h2 id="more-title" data-split>Keep exploring.</h2>
+          <h2 id="more-title" data-split>Keep <em>exploring.</em></h2>
         </div>
       </div>
       <div class="lgrid" data-reveal>
         <a class="lcard" href={`/facial-massage/${other.slug}/`}>
           <Pic name={other.img} alt={other.imgAlt} sizes="120px" widths={[240]} />
-          <span><b>{other.h1}</b><small>{other.lede.split('. ')[0]}.</small></span>
+          <span><b>{plain(other.h1)}</b><small>{other.lede.split('. ')[0]}.</small></span>
           <Icon name="arrow" class="go" />
         </a>
         <a class="lcard" href={`/facials/${sculpt.slug}/`}>
@@ -138,5 +139,5 @@ const visit = m.visit.map((s, i) => ({ k: `Step ${i + 1}`, title: s.name, text: 
     </div>
   </section>
 
-  <CtaBand title="Ready to feel the difference?" treatment={m.bookId} treatmentName={m.name.toLowerCase()} />
+  <CtaBand title="Ready to feel *the difference?*" treatment={m.bookId} treatmentName={m.name.toLowerCase()} />
 </Base>

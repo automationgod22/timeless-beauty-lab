@@ -134,7 +134,7 @@ if (!reduce) {
   const io = new IntersectionObserver((entries) => entries.forEach((e) => {
     if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
   }), { rootMargin: '0px 0px -8% 0px' });
-  $$('[data-reveal], [data-clip]').forEach((el) => io.observe(el));
+  $$('[data-reveal], [data-clip], .h-card').forEach((el) => io.observe(el));
 
   /* ---------------- headline line reveals ---------------- */
   const splitAll = () => {
@@ -167,6 +167,27 @@ if (!reduce) {
     gsap.set(split.words, { opacity: 0.16 });
     gsap.to(split.words, { opacity: 1, stagger: 0.12, ease: 'none', scrollTrigger: { trigger: el, start: 'top 82%', end: 'bottom 48%', scrub: true } });
   });
+
+  /* ---------------- hero wordmark ---------------- */
+  const wordmark = $('.wordmark');
+  if (wordmark) {
+    const chars = $$('.ch', wordmark);
+    const mid = (chars.length - 1) / 2;
+    gsap.to(chars, {
+      x: (i: number) => (i - mid) * innerWidth * 0.022,
+      yPercent: -14,
+      opacity: 0.18,
+      ease: 'none',
+      scrollTrigger: { trigger: '[data-hero]', start: 'top top', end: 'bottom top', scrub: 0.6, invalidateOnRefresh: true },
+    });
+    head?.classList.add('logo-hidden');
+    ScrollTrigger.create({
+      trigger: wordmark,
+      start: 'bottom top+=90',
+      onEnter: () => head?.classList.remove('logo-hidden'),
+      onLeaveBack: () => head?.classList.add('logo-hidden'),
+    });
+  }
 
   /* ---------------- hero: the arch opens into a full-screen film ---------------- */
   const stage = $('[data-stage]');
@@ -206,20 +227,41 @@ if (!reduce) {
     });
   }
 
-  /* ---------------- horizontal treatment rail ---------------- */
+  /* ---------------- signature facials: pinned horizontal rail ---------------- */
   const hs = $('[data-hscroll]');
   if (hs) {
     const mm = gsap.matchMedia();
     mm.add('(min-width: 900px)', () => {
-      const track = $('.h-track', hs)!, bar = $('.h-progress i', hs);
+      const track = $('.h-track', hs)!, bar = $('.h-bar i', hs), count = $('.h-count b', hs), ghost = $('.h-ghost', hs);
+      const cards = $$('.h-card', hs);
       const dist = () => Math.max(0, track.scrollWidth - innerWidth);
-      gsap.to(track, {
+      const centred = () => {
+        let best = 0, gap = Infinity;
+        cards.forEach((c, i) => {
+          const r = c.getBoundingClientRect();
+          const d = Math.abs(r.left + r.width / 2 - innerWidth / 2);
+          if (d < gap) { gap = d; best = i; }
+        });
+        return best;
+      };
+      const move = gsap.to(track, {
         x: () => -dist(),
         ease: 'none',
         scrollTrigger: {
           trigger: hs, start: 'top top', end: () => `+=${dist()}`, pin: true, scrub: 0.8, invalidateOnRefresh: true, anticipatePin: 1,
-          onUpdate: (self) => { if (bar) gsap.set(bar, { scaleX: self.progress }); },
+          onUpdate: (self) => {
+            if (bar) gsap.set(bar, { scaleX: self.progress });
+            if (count) count.textContent = String(centred() + 1).padStart(2, '0');
+          },
         },
+      });
+      // the outlined word drifts the other way, for depth
+      if (ghost) gsap.fromTo(ghost, { xPercent: 4 }, { xPercent: -38, ease: 'none', scrollTrigger: { trigger: hs, start: 'top bottom', end: () => `+=${dist() + innerHeight}`, scrub: 1, invalidateOnRefresh: true } });
+      cards.forEach((card) => {
+        const pic = $('.pic', card), im = $('.pic img', card), text = $$(':scope > h3, :scope > p, :scope > .fc-tech, :scope > .meta', card);
+        if (pic) gsap.fromTo(pic, { clipPath: 'inset(14% 0% 14% 42% round 20px)' }, { clipPath: 'inset(0% 0% 0% 0% round 20px)', ease: 'none', scrollTrigger: { trigger: card, containerAnimation: move, start: 'left 104%', end: 'left 52%', scrub: true } });
+        if (im) gsap.fromTo(im, { xPercent: 10, scale: 1.32 }, { xPercent: -10, scale: 1.14, ease: 'none', scrollTrigger: { trigger: card, containerAnimation: move, start: 'left right', end: 'right left', scrub: true } });
+        if (text.length) gsap.fromTo(text, { x: 60, opacity: 0 }, { x: 0, opacity: 1, stagger: 0.06, ease: 'none', scrollTrigger: { trigger: card, containerAnimation: move, start: 'left 96%', end: 'left 60%', scrub: true } });
       });
     });
   }
@@ -231,6 +273,27 @@ if (!reduce) {
     if (!next) return;
     gsap.to(card, { scale: 0.93, ease: 'none', scrollTrigger: { trigger: next, start: 'top bottom', end: 'top 30%', scrub: true } });
   });
+
+  /* ---------------- every image: opens from a soft inset and settles from a slow zoom ---------------- */
+  const pics = $$<HTMLElement>('main .pic').filter((pic) => !pic.hasAttribute('data-still') && !pic.closest('.h-track, .marquee, .iggrid, .stage, .lcard, .alts, .qresult'));
+  // read every position first, then write, so the browser lays the page out once
+  const onScreen = pics.map((pic) => pic.getBoundingClientRect().top < innerHeight * 0.85);
+  pics.forEach((pic, i) => {
+    const media = $('img, video', pic);
+    const from = { clipPath: 'inset(13% 9% 13% 9% round 30px)' };
+    const to = { clipPath: 'inset(0% 0% 0% 0% round 0px)', ease: 'none' };
+    if (onScreen[i]) {
+      // already visible when the page opens: play once instead of waiting for a scroll
+      gsap.fromTo(pic, from, { ...to, duration: 1.5, ease: 'expo.out', delay: 0.2 });
+      if (media) gsap.fromTo(media, { scale: 1.2 }, { scale: 1, duration: 1.8, ease: 'expo.out', delay: 0.2 });
+      return;
+    }
+    gsap.fromTo(pic, from, { ...to, scrollTrigger: { trigger: pic, start: 'top 96%', end: 'top 50%', scrub: 0.6 } });
+    if (media) gsap.fromTo(media, { scale: 1.24 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: pic, start: 'top 96%', end: 'top 25%', scrub: 0.6 } });
+  });
+
+  const igGrid = $('.iggrid');
+  if (igGrid) gsap.from($$('a', igGrid), { y: 80, opacity: 0, scale: 0.9, duration: 1.2, ease: 'expo.out', stagger: 0.08, scrollTrigger: { trigger: igGrid, start: 'top 88%', once: true } });
 
   /* ---------------- image parallax ---------------- */
   $$('[data-parallax]').forEach((fig) => {
@@ -273,8 +336,9 @@ if (!reduce) {
     });
   }
 
-  addEventListener('load', () => ScrollTrigger.refresh());
-  document.fonts?.ready.then(() => ScrollTrigger.refresh());
+  // one recalculation once images and fonts have settled, instead of one for each
+  const loaded = document.readyState === 'complete' ? Promise.resolve() : new Promise((r) => addEventListener('load', r, { once: true }));
+  Promise.all([loaded, document.fonts?.ready]).then(() => ScrollTrigger.refresh());
 }
 
 // Safety net: if anything above fails, never leave headings hidden.

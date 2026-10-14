@@ -41,8 +41,8 @@ const waBook = waLink("Hi! I'd like to book an appointment at Timeless Beauty La
   <meta name="description" content={description} />
   <link rel="canonical" href={canonical} />
   <meta name="robots" content={robots} />
-  <meta name="theme-color" content="#FFFDF9" media="(prefers-color-scheme: light)" />
-  <meta name="theme-color" content="#0E0C0A" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#FFFDF9" />
+  <meta name="color-scheme" content="light" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content={SITE.name} />
   <meta property="og:locale" content="en_US" />
@@ -66,17 +66,22 @@ const waBook = waLink("Hi! I'd like to book an appointment at Timeless Beauty La
   <link rel="preload" href={hankenFont} as="font" type="font/woff2" crossorigin />
   {preloadImage && <link rel="preload" as="image" href={preloadImage} fetchpriority="high" />}
   <script is:inline>
+    // White by default; dark only if this visitor chose it. Always open at the top of the page.
     (function () {
       var d = document.documentElement, t;
       try { t = localStorage.getItem('tbl-theme'); } catch (e) {}
-      if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-      d.setAttribute('data-theme', t);
+      d.setAttribute('data-mode', t === 'dark' ? 'dark' : 'light');
+      try {
+        var nav = performance.getEntriesByType('navigation')[0];
+        if ('scrollRestoration' in history && !(nav && nav.type === 'back_forward')) history.scrollRestoration = 'manual';
+      } catch (e) {}
     })();
   </script>
   {jsonLd.map((j) => <script type="application/ld+json" set:html={JSON.stringify(j)} />)}
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
+  <div class="scroll-line" aria-hidden="true"><i></i></div>
   <header class="site-head" id="head">
     <div class="wrap">
       <a class="logo" href="/"><b>Timeless</b> <span>Beauty Lab</span></a>
@@ -152,7 +157,19 @@ const waBook = waLink("Hi! I'd like to book an appointment at Timeless Beauty La
     <a class="icon-btn" href={waBook} target="_blank" rel="noopener" aria-label="Chat on WhatsApp"><Icon name="chat" /></a>
     <a class="icon-btn" href={SITE.instagramDM} target="_blank" rel="noopener" aria-label="Message on Instagram"><Icon name="ig" /></a>
   </div>
-  <div class="cursor" id="cursor" aria-hidden="true"><b></b></div>
+  <canvas class="cursor-trail" id="cursor-trail" aria-hidden="true"></canvas>
+  <div class="cursor" id="cursor" aria-hidden="true">
+    <svg class="dropper" viewBox="0 0 32 32">
+      <g transform="translate(2 2) rotate(-45)">
+        <path class="glass" d="M0 0 L-1.8 5.6 L-2.2 14 L2.2 14 L1.8 5.6 Z" />
+        <path class="serum" d="M-0.5 1.6 L-1.45 5.8 L-1.7 9.6 L1.7 9.6 L1.45 5.8 L0.5 1.6 Z" />
+        <rect class="collar" x="-3.1" y="13.8" width="6.2" height="2.6" rx="0.9" />
+        <rect class="bulb" x="-3.5" y="16.4" width="7" height="10.4" rx="3.5" />
+      </g>
+      <circle class="drip" cx="2.2" cy="3.6" r="1.5" />
+    </svg>
+    <b></b>
+  </div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script>

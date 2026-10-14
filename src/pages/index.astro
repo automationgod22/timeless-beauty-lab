@@ -94,6 +94,19 @@ const ig = ['ig-1', 'ig-4', 'ig-5', 'ig-6', 'ig-3', 'hero'];
     </div>
   </section>
 
+  <!-- Treatment ticker -->
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track">
+      {[0, 1].map(() => (
+        <span class="ticker-row">
+          {['HydroFacial', 'Microcurrent', 'RF skin tightening', 'Cryotherapy', 'Lymphatic drainage', 'Buccal massage', 'LET Eye Peel', 'ESABIOPEEL', 'Carboxytherapy', 'Diamond resurfacing'].map((t) => (
+            <><span class="tk">{t}</span><Icon name="spark" /></>
+          ))}
+        </span>
+      ))}
+    </div>
+  </div>
+
   <!-- Signature facials: horizontal rail -->
   <section class="hscroll" data-hscroll aria-labelledby="facials-title">
     <p class="h-ghost" aria-hidden="true">Signature rituals</p>
@@ -106,7 +119,6 @@ const ig = ['ig-1', 'ig-4', 'ig-5', 'ig-6', 'ig-3', 'hero'];
           <div class="h-intro-foot">
             <a class="btn btn-ghost btn-sm" href="/facials/"><span>Compare all facials</span></a>
             <span class="label on-desk">Scroll to explore</span>
-            <span class="label on-mob">Swipe to explore</span>
           </div>
         </div>
         {FACIALS.map((f, i) => <FacialCard f={f} n={i + 1} class="h-card" sizes="(max-width: 899px) 78vw, 25vw" />)}

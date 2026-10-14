@@ -3,6 +3,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
 import Lenis from 'lenis';
+import { initCursor } from './cursor';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 ScrollTrigger.config({ ignoreMobileResize: true });
@@ -29,12 +30,13 @@ export const toast = (text: string) => {
 
 /* ---------------- theme with circular reveal ---------------- */
 const setTheme = (mode: string) => {
-  root.setAttribute('data-theme', mode);
+  root.setAttribute('data-mode', mode);
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', mode === 'dark' ? '#0E0C0A' : '#FFFDF9');
   try { localStorage.setItem('tbl-theme', mode); } catch {}
 };
 const themeBtn = $('#theme-btn');
 themeBtn?.addEventListener('click', () => {
-  const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  const next = root.getAttribute('data-mode') === 'dark' ? 'light' : 'dark';
   const doc = document as any;
   if (!doc.startViewTransition || reduce) return setTheme(next);
   const r = themeBtn.getBoundingClientRect();
@@ -53,12 +55,18 @@ themeBtn?.addEventListener('click', () => {
 
 /* ---------------- smooth scroll ---------------- */
 let lenis: Lenis | null = null;
-if (!reduce) {
+// Smooth wheel scrolling on desktop; phones keep their own native (already smooth) touch scrolling.
+if (!reduce && fine) {
   lenis = new Lenis({ lerp: 0.095, smoothWheel: true, anchors: { offset: -90 } });
   lenis.on('scroll', ScrollTrigger.update);
   gsap.ticker.add((t) => lenis!.raf(t * 1000));
   gsap.ticker.lagSmoothing(0);
   (window as any).tblLenis = lenis;
+}
+const navType = (performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined)?.type;
+if (!location.hash && navType !== 'back_forward') {
+  window.scrollTo(0, 0);
+  lenis?.scrollTo(0, { immediate: true, force: true });
 }
 
 /* ---------------- remember a chosen treatment or goal for the next page ---------------- */
@@ -134,32 +142,28 @@ if (!reduce) {
   const io = new IntersectionObserver((entries) => entries.forEach((e) => {
     if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
   }), { rootMargin: '0px 0px -8% 0px' });
-  $$('[data-reveal], [data-clip], .h-card').forEach((el) => io.observe(el));
+  $$('[data-reveal], [data-clip]').forEach((el) => io.observe(el));
 
-  /* ---------------- headline line reveals ---------------- */
+  /* ---------------- headline line reveals ----------------
+     Each heading is split into lines only when it is about to be seen, slides up line by line,
+     then goes back to plain text so it reflows naturally on any screen. */
+  let splitReady = false;
+  const reveal = (el: HTMLElement, delay = 0) => {
+    const split = SplitText.create(el, { type: 'lines', mask: 'lines', linesClass: 'split-line' });
+    gsap.set(el, { opacity: 1 });
+    gsap.from(split.lines, { yPercent: 112, duration: 1.25, ease: 'expo.out', stagger: 0.09, delay, onComplete: () => split.revert() });
+  };
+  const splitIO = new IntersectionObserver((entries) => entries.forEach((e) => {
+    if (!e.isIntersecting) return;
+    splitIO.unobserve(e.target);
+    reveal(e.target as HTMLElement);
+  }), { rootMargin: '0px 0px -10% 0px' });
   const splitAll = () => {
-    $$('[data-split]').forEach((el) => {
-      const onLoad = el.dataset.split === 'load';
-      SplitText.create(el, {
-        type: 'lines',
-        mask: 'lines',
-        linesClass: 'split-line',
-        autoSplit: true,
-        onSplit(self) {
-          gsap.set(el, { opacity: 1 });
-          return gsap.from(self.lines, {
-            yPercent: 112,
-            duration: 1.25,
-            ease: 'expo.out',
-            stagger: 0.09,
-            delay: onLoad ? 0.1 : 0,
-            scrollTrigger: onLoad ? undefined : { trigger: el, start: 'top 90%', once: true },
-          });
-        },
-      });
-    });
+    splitReady = true;
+    $$('[data-split]').forEach((el) => (el.dataset.split === 'load' ? reveal(el, 0.1) : splitIO.observe(el)));
   };
   if (document.fonts?.ready) document.fonts.ready.then(splitAll); else splitAll();
+  (window as any).tblSplitReady = () => splitReady;
 
   /* ---------------- statement: words light up while scrolling ---------------- */
   $$('[data-words]').forEach((el) => {
@@ -231,40 +235,66 @@ if (!reduce) {
   const hs = $('[data-hscroll]');
   if (hs) {
     const mm = gsap.matchMedia();
-    mm.add('(min-width: 900px)', () => {
+    mm.add('(min-width: 1px)', () => {
       const track = $('.h-track', hs)!, bar = $('.h-bar i', hs), count = $('.h-count b', hs), ghost = $('.h-ghost', hs);
       const cards = $$('.h-card', hs);
       const dist = () => Math.max(0, track.scrollWidth - innerWidth);
+      // card centres are measured once per layout, then compared with the track's current offset (no layout reads while scrolling)
+      let centres: number[] = [];
+      const measure = () => { centres = cards.map((c) => c.offsetLeft + c.offsetWidth / 2); };
+      measure();
+      ScrollTrigger.addEventListener('refresh', measure);
+      let shown = -1;
       const centred = () => {
+        const x = Number(gsap.getProperty(track, 'x')) || 0;
         let best = 0, gap = Infinity;
-        cards.forEach((c, i) => {
-          const r = c.getBoundingClientRect();
-          const d = Math.abs(r.left + r.width / 2 - innerWidth / 2);
-          if (d < gap) { gap = d; best = i; }
-        });
+        centres.forEach((c, i) => { const d = Math.abs(c + x - innerWidth / 2); if (d < gap) { gap = d; best = i; } });
         return best;
       };
       const move = gsap.to(track, {
         x: () => -dist(),
         ease: 'none',
-        scrollTrigger: {
-          trigger: hs, start: 'top top', end: () => `+=${dist()}`, pin: true, scrub: 0.8, invalidateOnRefresh: true, anticipatePin: 1,
-          onUpdate: (self) => {
-            if (bar) gsap.set(bar, { scaleX: self.progress });
-            if (count) count.textContent = String(centred() + 1).padStart(2, '0');
-          },
+        // read from the rendered (smoothed) position, so the counter matches the card you see
+        onUpdate() {
+          if (bar) gsap.set(bar, { scaleX: this.progress() });
+          const n = centred();
+          if (count && n !== shown) { shown = n; count.textContent = String(n + 1).padStart(2, '0'); }
         },
+        scrollTrigger: { trigger: hs, start: 'top top', end: () => `+=${dist()}`, pin: true, scrub: 0.8, invalidateOnRefresh: true, anticipatePin: 1 },
       });
       // the outlined word drifts the other way, for depth
       if (ghost) gsap.fromTo(ghost, { xPercent: 4 }, { xPercent: -38, ease: 'none', scrollTrigger: { trigger: hs, start: 'top bottom', end: () => `+=${dist() + innerHeight}`, scrub: 1, invalidateOnRefresh: true } });
+      // one timeline per card, spanning its whole trip across the screen: the photo opens as it enters,
+      // drifts inside its frame the whole way, and the words follow it in
       cards.forEach((card) => {
         const pic = $('.pic', card), im = $('.pic img', card), text = $$(':scope > h3, :scope > p, :scope > .fc-tech, :scope > .meta', card);
-        if (pic) gsap.fromTo(pic, { clipPath: 'inset(14% 0% 14% 42% round 20px)' }, { clipPath: 'inset(0% 0% 0% 0% round 20px)', ease: 'none', scrollTrigger: { trigger: card, containerAnimation: move, start: 'left 104%', end: 'left 52%', scrub: true } });
-        if (im) gsap.fromTo(im, { xPercent: 10, scale: 1.32 }, { xPercent: -10, scale: 1.14, ease: 'none', scrollTrigger: { trigger: card, containerAnimation: move, start: 'left right', end: 'right left', scrub: true } });
-        if (text.length) gsap.fromTo(text, { x: 60, opacity: 0 }, { x: 0, opacity: 1, stagger: 0.06, ease: 'none', scrollTrigger: { trigger: card, containerAnimation: move, start: 'left 96%', end: 'left 60%', scrub: true } });
+        const trip = innerWidth + card.offsetWidth;
+        const tl = gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: card, containerAnimation: move, start: 'left right', end: 'right left', scrub: true } });
+        if (im) tl.fromTo(im, { xPercent: 10, scale: 1.32 }, { xPercent: -10, scale: 1.14, duration: 1 }, 0);
+        if (pic) tl.fromTo(pic, { clipPath: 'inset(14% 0% 14% 42% round 20px)' }, { clipPath: 'inset(0% 0% 0% 0% round 20px)', duration: (innerWidth * 0.5) / trip }, 0);
+        if (text.length) tl.fromTo(text, { x: 60, opacity: 0 }, { x: 0, opacity: 1, stagger: 0.02, duration: (innerWidth * 0.34) / trip }, (innerWidth * 0.06) / trip);
       });
     });
   }
+
+  /* ---------------- treatment ticker: drifts on its own, speeds up and turns with your scroll ---------------- */
+  const tickerTrack = $('.ticker-track');
+  if (tickerTrack) {
+    const loop = gsap.to(tickerTrack, { xPercent: -50, ease: 'none', duration: 42, repeat: -1 });
+    loop.totalTime(loop.duration() * 200); // room to run backwards when scrolling up
+    ScrollTrigger.create({
+      trigger: '.ticker', start: 'top bottom', end: 'bottom top',
+      onUpdate(self) {
+        const dir = self.direction;
+        const boost = Math.min(6, Math.abs(self.getVelocity()) / 260);
+        gsap.to(loop, { timeScale: dir * (1 + boost), duration: 0.2, overwrite: true, onComplete: () => { gsap.to(loop, { timeScale: dir, duration: 1.4, overwrite: true }); } });
+      },
+    });
+  }
+
+  /* ---------------- thin gold line that fills as you read ---------------- */
+  const line = $('.scroll-line i');
+  if (line) ScrollTrigger.create({ start: 0, end: 'max', onUpdate: (self) => gsap.set(line, { scaleX: self.progress }) });
 
   /* ---------------- stacking technology cards ---------------- */
   const cards = $$('.stack-card');
@@ -276,21 +306,28 @@ if (!reduce) {
 
   /* ---------------- every image: opens from a soft inset and settles from a slow zoom ---------------- */
   const pics = $$<HTMLElement>('main .pic').filter((pic) => !pic.hasAttribute('data-still') && !pic.closest('.h-track, .marquee, .iggrid, .stage, .lcard, .alts, .qresult'));
-  // read every position first, then write, so the browser lays the page out once
-  const onScreen = pics.map((pic) => pic.getBoundingClientRect().top < innerHeight * 0.85);
-  pics.forEach((pic, i) => {
-    const media = $('img, video', pic);
-    const from = { clipPath: 'inset(13% 9% 13% 9% round 30px)' };
-    const to = { clipPath: 'inset(0% 0% 0% 0% round 0px)', ease: 'none' };
-    if (onScreen[i]) {
-      // already visible when the page opens: play once instead of waiting for a scroll
-      gsap.fromTo(pic, from, { ...to, duration: 1.5, ease: 'expo.out', delay: 0.2 });
-      if (media) gsap.fromTo(media, { scale: 1.2 }, { scale: 1, duration: 1.8, ease: 'expo.out', delay: 0.2 });
-      return;
-    }
-    gsap.fromTo(pic, from, { ...to, scrollTrigger: { trigger: pic, start: 'top 96%', end: 'top 50%', scrub: 0.6 } });
-    if (media) gsap.fromTo(media, { scale: 1.24 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: pic, start: 'top 96%', end: 'top 25%', scrub: 0.6 } });
-  });
+  // phones and tablets: the same reveal, played once by the browser (CSS) when each image arrives, which keeps scrolling light
+  if (!(fine && innerWidth >= 900)) {
+    pics.forEach((pic) => { pic.classList.add('rv'); io.observe(pic); });
+  } else {
+    // desktop: tied to the scroll. Read every position first, then write, so the browser lays the page out once
+    const onScreen = pics.map((pic) => pic.getBoundingClientRect().top < innerHeight * 0.85);
+    pics.forEach((pic, i) => {
+      const media = $('img, video', pic);
+      const from = { clipPath: 'inset(13% 9% 13% 9% round 30px)' };
+      const to = { clipPath: 'inset(0% 0% 0% 0% round 0px)', ease: 'none' };
+      if (onScreen[i]) {
+        // already visible when the page opens: play once instead of waiting for a scroll
+        gsap.fromTo(pic, from, { ...to, duration: 1.5, ease: 'expo.out', delay: 0.2 });
+        if (media) gsap.fromTo(media, { scale: 1.2 }, { scale: 1, duration: 1.8, ease: 'expo.out', delay: 0.2 });
+        return;
+      }
+      // one scroll trigger per image: the frame opens over the first two thirds, the zoom settles over the whole range
+      const tl = gsap.timeline({ scrollTrigger: { trigger: pic, start: 'top 96%', end: 'top 25%', scrub: 0.6 } });
+      tl.fromTo(pic, from, { ...to, duration: 0.65 }, 0);
+      if (media) tl.fromTo(media, { scale: 1.24 }, { scale: 1, ease: 'none', duration: 1 }, 0);
+    });
+  }
 
   const igGrid = $('.iggrid');
   if (igGrid) gsap.from($$('a', igGrid), { y: 80, opacity: 0, scale: 0.9, duration: 1.2, ease: 'expo.out', stagger: 0.08, scrollTrigger: { trigger: igGrid, start: 'top 88%', once: true } });
@@ -316,17 +353,9 @@ if (!reduce) {
   const word = $('.foot-word');
   if (word) gsap.fromTo(word, { yPercent: 40 }, { yPercent: 0, ease: 'none', scrollTrigger: { trigger: '.site-foot', start: 'top bottom', end: 'bottom bottom', scrub: true } });
 
-  /* ---------------- desktop cursor and magnetic buttons ---------------- */
+  /* ---------------- desktop: serum-dropper cursor and magnetic buttons ---------------- */
   if (fine) {
-    const cur = $('#cursor')!, label = $('b', cur)!;
-    const xTo = gsap.quickTo(cur, 'x', { duration: 0.35, ease: 'power3.out' });
-    const yTo = gsap.quickTo(cur, 'y', { duration: 0.35, ease: 'power3.out' });
-    addEventListener('pointermove', (e) => { xTo(e.clientX); yTo(e.clientY); cur.classList.add('on'); }, { passive: true });
-    document.addEventListener('pointerleave', () => cur.classList.remove('on'));
-    $$('[data-cursor]').forEach((el) => {
-      el.addEventListener('pointerenter', () => { label.textContent = el.dataset.cursor || ''; cur.classList.add('big'); });
-      el.addEventListener('pointerleave', () => cur.classList.remove('big'));
-    });
+    initCursor(root);
     $$('[data-magnetic]').forEach((btn) => {
       btn.addEventListener('pointermove', (e) => {
         const b = btn.getBoundingClientRect();
@@ -342,4 +371,7 @@ if (!reduce) {
 }
 
 // Safety net: if anything above fails, never leave headings hidden.
-setTimeout(() => $$('[data-split]').forEach((el) => { if (getComputedStyle(el).opacity === '0') el.style.opacity = '1'; }), 2500);
+setTimeout(() => {
+  if ((window as any).tblSplitReady?.()) return;
+  $$('[data-split]').forEach((el) => { if (getComputedStyle(el).opacity === '0') el.style.opacity = '1'; });
+}, 2500);

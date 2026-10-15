@@ -1,27 +1,44 @@
 ---
-// One client quote, styled as a note: optional before/after photo, the words as written, and where they came from.
-import Pic from './Pic.astro';
+// One client review, laid out like a brand review card: who, where it came from, a headline line, the full words,
+// and the before/after photos as a thumbnail that opens larger.
+import { getImage } from 'astro:assets';
 import Icon from './Icon.astro';
-import { byline, type Review } from '../data/reviews';
+import { img } from '../data/images';
+import type { Review } from '../data/reviews';
 interface Props { r: Review; class?: string; }
 const { r, class: cls = '' } = Astro.props;
+const head = r.short ?? r.quote;
+const showBody = !!r.short && r.short !== r.quote;
+const photo = r.photo ? img(r.photo) : null;
+const thumb = photo ? await getImage({ src: photo, width: 240, format: 'webp', quality: 75 }) : null;
+const full = photo ? await getImage({ src: photo, width: Math.min(1000, photo.width), format: 'webp', quality: 82 }) : null;
+const who = r.name ?? 'Client';
 ---
-<figure class={`rcard ${r.photo ? 'has-photo' : ''} ${cls}`}>
-  {r.photo && (
-    <div class="rc-photo">
-      <Pic name={r.photo} alt="Before and after photos from this client’s visit, before on the left" sizes="(max-width: 760px) 300px, 360px" widths={[400, 720]} still />
-      <span class="rc-tag b" aria-hidden="true">Before</span><span class="rc-tag a" aria-hidden="true">After</span>
-    </div>
-  )}
-  <blockquote><p>“{r.quote}”</p></blockquote>
+<figure class={`rcard ${cls}`}>
+  <div class="rc-top">
+    <span class={`rc-av ${r.name ? '' : 'anon'}`} aria-hidden="true">{r.name ? r.name[0] : <Icon name="ig" />}</span>
+    <span class="rc-who"><b>{who}</b><span class="rc-src"><Icon name="check" />{r.source}</span></span>
+    <span class="rc-date">{r.date}</span>
+  </div>
+  <blockquote>
+    <p class="rc-head" aria-hidden={showBody ? 'true' : undefined}>{showBody ? `“${head}”` : `“${r.quote}”`}</p>
+    {showBody && <p class="rc-body">{r.quote}</p>}
+  </blockquote>
   {r.original && (
     <details class="rc-orig">
       <summary>{r.original.label}</summary>
       <p lang={r.original.lang}>“{r.original.text}”</p>
     </details>
   )}
-  <figcaption>
-    <span class="rc-src"><Icon name="ig" /><span>{byline(r)}</span></span>
-    {r.context && <span class="rc-ctx">{r.context}</span>}
-  </figcaption>
+  {(r.context || thumb) && (
+    <figcaption class="rc-foot">
+      {r.context && <span class="rc-ctx">{r.context}</span>}
+      {thumb && full && (
+        <button type="button" class="rc-thumb" data-lightbox={full.src} data-alt={`Before and after photos from this client’s visit, before on the left (${r.date})`} aria-label="View this client’s before and after photos">
+          <img src={thumb.src} alt="" width="120" height="75" loading="lazy" decoding="async" />
+          <span>Before · After</span>
+        </button>
+      )}
+    </figcaption>
+  )}
 </figure>

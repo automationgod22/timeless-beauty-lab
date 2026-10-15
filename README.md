@@ -17,7 +17,8 @@ npm run preview  # serve the production build
 | --- | --- |
 | Name, phone, WhatsApp, address, hours, Instagram | `src/data/site.ts` |
 | Facials, peels, massages, prices, FAQs, results captions | `src/data/content.ts` |
-| Client quotes (home wall, page quotes, results “inbox”) | `src/data/reviews.ts` |
+| Client quotes (home slider, page quotes, results “inbox”) | `src/data/reviews.ts` |
+| Website offer pop-up (treatment, %, code, timing) | `src/data/offer.ts` |
 | Lymphatic drainage and buccal massage pages | `src/data/massage.ts` |
 | Skin quiz questions and scoring | `src/data/quiz.ts` |
 | Colors, type, spacing, dark mode | `src/styles/global.css` |
@@ -51,3 +52,5 @@ That switches on indexing, puts the sitemap in `robots.txt` and makes every cano
 - Structured data: BeautySalon (address, phone, services and prices), Service pages, breadcrumbs and FAQs.
 - One page per facial and per massage technique, each written for its own Google searches.
 - Sitemap at `/sitemap-index.xml`, `robots.txt`, image alt text, fast loading (self-hosted fonts, responsive WebP images).
+
+**Website offer.** A corner card (bottom sheet on phones) offers 5% off the Glass Skin Glow Up with code `WEBSITE5`. It appears after 30 seconds on the site, counted across pages, or 60% down a long page, whichever comes first. It never shows on the booking page, "Not now" hides it for a week, and the deadline is always the last day of the current month. Claiming it pre-selects the treatment on the booking form and adds the code to the message Tatiana receives. Change or switch it off in `src/data/offer.ts` (`enabled: false`); give it a new `key` to show a new offer to people who closed the old one.

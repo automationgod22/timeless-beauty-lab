@@ -40,7 +40,7 @@ export const REVIEWS: Review[] = [
   {
     id: 'worth-it',
     quote: 'Highly recommend!!! I finally booked an appointment which was yesterday and am already seeing the results: fuller lips, less wrinkles, more skin elasticity. Worth it.',
-    short: 'Already seeing the results. Worth it.',
+    short: 'Worth it.',
     source: 'Instagram comment',
     date: 'Sep 2025',
     context: 'The day after her visit',
@@ -49,6 +49,7 @@ export const REVIEWS: Review[] = [
   {
     id: 'chin',
     quote: 'Hi Tatiana! My chin looks so much better today! Thank you!',
+    short: 'My chin looks so much better today!',
     source: 'Instagram message',
     date: 'Nov 2025',
     context: 'The morning after her visit',
@@ -57,6 +58,7 @@ export const REVIEWS: Review[] = [
   {
     id: 'loved-massage',
     quote: 'Thankyouuu. I loved the massage',
+    short: 'I loved the massage',
     source: 'Instagram message',
     date: 'Sep 2025',
     context: 'Facial massage',
@@ -65,6 +67,7 @@ export const REVIEWS: Review[] = [
   {
     id: 'business-meetings',
     quote: 'My cosmetologist @timeless_beauty_lab does such a cleansing facial that you can go straight from her treatment room to business meetings.',
+    short: 'Straight from her treatment room to business meetings.',
     source: 'Instagram story',
     date: 'May 2026',
     context: 'Translated from Russian',
@@ -73,7 +76,7 @@ export const REVIEWS: Review[] = [
   {
     id: 'pampering',
     quote: 'Thank you so much tattiana. It’s always a great pampering time visiting you',
-    short: 'Always a great pampering time.',
+    short: 'It’s always a great pampering time.',
     source: 'Instagram message',
     date: 'Feb 2026',
     context: 'A regular client',
@@ -82,6 +85,7 @@ export const REVIEWS: Review[] = [
   {
     id: 'coolest-master',
     quote: 'Thank you so much to the COOLEST MASTER for the wonderful work on my skin. I highly recommend it',
+    short: 'I highly recommend it.',
     name: 'Nataliia',
     source: 'Instagram story',
     date: 'Nov 2025',
@@ -89,6 +93,7 @@ export const REVIEWS: Review[] = [
   {
     id: 'book-another',
     quote: 'That was amazing thank you so much. I’ll be in touch to book another appt',
+    short: 'That was amazing.',
     source: 'Instagram message',
     date: 'Aug 2025',
     photo: 'pair-aug',
@@ -96,6 +101,7 @@ export const REVIEWS: Review[] = [
   {
     id: 'relaxed',
     quote: 'Yessss, thank you for today! I really so relaxed today',
+    short: 'I really so relaxed today',
     source: 'Instagram message',
     date: 'Jan 2026',
     shot: 'msg-relaxed',
@@ -103,6 +109,7 @@ export const REVIEWS: Review[] = [
   {
     id: 'found-you',
     quote: 'Amazing, so happy I found you',
+    short: 'So happy I found you.',
     name: 'Melissa',
     source: 'Instagram comment',
     date: '2026',

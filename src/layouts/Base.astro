@@ -5,6 +5,7 @@ import frauncesFont from '../assets/fonts/fraunces-soft-latin.woff2?url';
 import hankenFont from '@fontsource-variable/hanken-grotesk/files/hanken-grotesk-latin-wght-normal.woff2?url';
 import Icon from '../components/Icon.astro';
 import { SITE, ALLOW_INDEXING, waLink } from '../data/site';
+import Offer from '../components/Offer.astro';
 
 interface Props {
   title: string;
@@ -13,8 +14,10 @@ interface Props {
   jsonLd?: object[];
   noindex?: boolean;
   preloadImage?: string;
+  /** hide the website-offer card on this page */
+  noOffer?: boolean;
 }
-const { title, description, og = 'default', jsonLd = [], noindex = false, preloadImage } = Astro.props;
+const { title, description, og = 'default', jsonLd = [], noindex = false, preloadImage, noOffer = false } = Astro.props;
 const site = Astro.site!;
 const canonical = new URL(Astro.url.pathname, site).toString();
 const ogImage = new URL(`/og/${og}.jpg`, site).toString();
@@ -172,6 +175,11 @@ const waBook = waLink("Hi! I'd like to book an appointment at Timeless Beauty La
     </svg>
     <b></b>
   </div>
+  {!noOffer && <Offer />}
+  <dialog class="lightbox" id="lightbox" aria-label="Photo">
+    <div class="lb-frame"></div>
+    <button type="button" class="icon-btn lb-x" data-lb-close aria-label="Close photo"><Icon name="close" /></button>
+  </dialog>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script>

@@ -1,0 +1,30 @@
+---
+// Corner card with this month's website offer. Hidden until the script decides to show it.
+import Pic from './Pic.astro';
+import Icon from './Icon.astro';
+import { OFFER } from '../data/offer';
+import { FACIALS } from '../data/content';
+const f = FACIALS.find((x) => x.slug === OFFER.treatment)!;
+const href = `/book/?treatment=${f.slug}&offer=${OFFER.code}`;
+---
+{OFFER.enabled && (
+  <aside class="offer" id="offer" role="dialog" aria-labelledby="offer-title" aria-describedby="offer-desc" hidden
+    data-key={OFFER.key} data-code={OFFER.code} data-treatment={f.slug} data-after={OFFER.afterSeconds}
+    data-scroll={OFFER.atScroll} data-min={OFFER.minSeconds} data-snooze={OFFER.snoozeDays}>
+    <div class="of-media">
+      <Pic name={f.img} alt="" sizes="150px" widths={[300]} still />
+      <span class="of-badge" aria-hidden="true"><b>{OFFER.percent}%</b><small>off</small></span>
+    </div>
+    <div class="of-body">
+      <p class="of-eyebrow">Website offer <span>· ends <time data-offer-end>this month</time></span></p>
+      <h2 class="of-title" id="offer-title">{f.name}</h2>
+      <p class="of-desc" id="offer-desc">Save {OFFER.percent}% on her signature facial when you book from the website. Your code <b class="of-code">{OFFER.code}</b> is added to your request.</p>
+      <p class="of-meta">{f.minutes} · from ${f.price} · limited appointments each week</p>
+      <div class="of-btns">
+        <a class="btn btn-primary" href={href} data-treatment={f.slug} data-offer-claim><span>Claim {OFFER.percent}% and book</span><Icon name="arrow" /></a>
+        <button type="button" class="link of-later" data-offer-close>Not now</button>
+      </div>
+    </div>
+    <button type="button" class="of-x" data-offer-close aria-label="Close the offer"><Icon name="close" /></button>
+  </aside>
+)}

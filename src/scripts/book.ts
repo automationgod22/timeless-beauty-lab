@@ -1,6 +1,9 @@
 // Booking request: three short steps, then the request is sent as a message on WhatsApp, Instagram or SMS.
 // Nothing is stored or sent anywhere else.
-type Data = { phone: string; whatsapp: string; ig: string };
+import { claimedOffer, claimOffer, monthEndLabel } from './offer';
+
+type Offer = { key: string; code: string; percent: number; treatment: string; name: string };
+type Data = { phone: string; whatsapp: string; ig: string; offer: Offer | null };
 
 const toast = (t: string) => (window as any).tblToast?.(t);
 
@@ -34,7 +37,27 @@ export function initBooking() {
   const summary = form.querySelector<HTMLElement>('#b-summary')!;
   const preview = form.querySelector<HTMLElement>('#b-msg')!;
   const picks = [...form.querySelectorAll<HTMLElement>('[data-pick]')];
+  const note = document.getElementById('offer-note');
   let cur = 0;
+
+  // The website offer: claimed from the pop-up (kept on this device until the month ends) or arriving with ?offer=CODE.
+  const offer = data.offer;
+  let offerOn = false;
+  if (offer) {
+    const q = new URLSearchParams(location.search).get('offer');
+    if (q && q.toUpperCase() === offer.code) { claimOffer(offer.key, offer.code, offer.treatment); offerOn = true; }
+    else offerOn = claimedOffer()?.code === offer.code;
+  }
+  const offerApplies = () => !!offer && offerOn && sel.value === offer.treatment;
+  const tick = '<svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7"/></svg>';
+  const renderNote = () => {
+    if (!note || !offer || !offerOn) return;
+    note.hidden = false;
+    note.classList.toggle('on', offerApplies());
+    note.innerHTML = offerApplies()
+      ? `${tick}<span><b>Website offer applied.</b> ${offer.percent}% off your ${offer.name}, code ${offer.code}. Book by ${monthEndLabel()}.</span>`
+      : `<span>Your ${offer.percent}% website offer is for the <b>${offer.name}</b>.</span><button type="button" class="link" data-offer-switch>Switch to it</button>`;
+  };
 
   // Next 14 days as tappable chips.
   const today = new Date();
@@ -65,6 +88,7 @@ export function initBooking() {
       "Hi Tatiana! I'd like to book an appointment.",
       '',
       `Treatment: ${t.name}${t.detail ? ` (${t.detail})` : ''}`,
+      ...(offerApplies() && offer ? [`Website offer: ${offer.code} (${offer.percent}% off)`] : []),
       `Preferred day: ${checked('day') || 'Any day'}`,
       `Time of day: ${checked('time') || 'Any time'}`,
       `Name: ${val('name')}`,
@@ -87,6 +111,7 @@ export function initBooking() {
       b.textContent = t.name;
       summary.append(b, document.createTextNode(`${t.detail ? ` · ${t.detail}` : ''}`), document.createElement('br'), document.createTextNode(`${checked('day') || 'Any day'}, ${(checked('time') || 'Any time').toLowerCase()}`));
     }
+    renderNote();
     const text = message();
     preview.textContent = text;
     syncLinks(text);
@@ -141,6 +166,9 @@ export function initBooking() {
     }
   });
   // "Continue" buttons submit the form, so Enter in a field moves on too; the last step hands over to WhatsApp
+  note?.addEventListener('click', (e) => {
+    if ((e.target as Element).closest('[data-offer-switch]') && offer) { sel.value = offer.treatment; valid(0); update(); }
+  });
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     if (!valid(cur)) return;

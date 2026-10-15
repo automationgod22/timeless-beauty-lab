@@ -8,7 +8,7 @@ import Faq from '../components/Faq.astro';
 import CtaBand from '../components/CtaBand.astro';
 import { SITE } from '../data/site';
 import { FACIALS, TECH, PEELS, BA, GALLERY, FAQ_GENERAL, BOOKABLE, priceLabel } from '../data/content';
-import { REVIEWS, review, byline } from '../data/reviews';
+import { REVIEWS, review } from '../data/reviews';
 import ReviewCard from '../components/ReviewCard.astro';
 import { QUESTIONS } from '../data/quiz';
 import { business } from '../data/schema';
@@ -26,11 +26,10 @@ const goals = QUESTIONS[0].options;
 const peels = PEELS.filter((p) => ['let-eye-peel', 'esabiopeel', 'lami-glass-skin-renewal'].includes(p.id));
 const baHome = BA.filter((b) => b.n === 1 || b.n === 3);
 const ig = ['ig-1', 'ig-4', 'ig-5', 'ig-6', 'ig-3', 'hero'];
-// the big quote, then every other quote on two slowly drifting rows
 const featured = review('brand-new');
-const rest = REVIEWS.filter((r) => r.id !== featured.id);
-const wallA = rest.filter((_, i) => i % 2 === 0);
-const wallB = rest.filter((_, i) => i % 2 === 1);
+const n = (src: string) => REVIEWS.filter((r) => r.source === src).length;
+const plural = (k: number, w: string) => `${k} ${w}${k === 1 ? '' : 's'}`;
+const counts = `${plural(n('Instagram message'), 'message')}, ${plural(n('Instagram comment'), 'comment')} and ${plural(n('Instagram story'), 'story').replace('storys', 'stories')}`;
 ---
 <Base
   title="Timeless Beauty Lab | Facials & Peels in Jersey City, NJ"
@@ -292,26 +291,27 @@ const wallB = rest.filter((_, i) => i % 2 === 1);
 
   <!-- Kind words: real messages and comments from clients -->
   <section class="sec tint reviews" id="reviews" aria-labelledby="reviews-title">
-    <div class="wrap">
-      <div class="sec-head">
-        <div><p class="eyebrow">Kind words</p><h2 id="reviews-title" data-split>In their <em>own words.</em></h2></div>
-        <div class="side" data-reveal>
-          <p class="body-2">Real messages and comments from clients, from the studio’s Instagram highlights. Quoted as written; one is translated from Russian.</p>
-          <a class="link" href="/results/#messages"><span>See the original messages</span><Icon name="arrow" /></a>
-        </div>
+    <div class="wrap rs-head">
+      <div>
+        <p class="eyebrow">Kind words</p>
+        <h2 id="reviews-title" data-split>In their <em>own words.</em></h2>
       </div>
-      <figure class="rfeature">
-        <span class="rq-mark" aria-hidden="true">“</span>
-        <blockquote><p class="rq" data-split>My face feels like <em>brand new.</em></p></blockquote>
-        <figcaption data-reveal><b>{featured.name}</b><span>{featured.source} · {featured.date}</span></figcaption>
-      </figure>
+      <div class="rs-sum" data-reveal>
+        <p class="rs-num"><b>{REVIEWS.length}</b><span>real reviews,<br />quoted as written</span></p>
+        <p class="body-2">{counts}, from the studio’s Instagram. One is translated from Russian.</p>
+        <a class="link" href="/results/#messages"><span>See the original messages</span><Icon name="arrow" /></a>
+      </div>
     </div>
-    <div class="rwall" data-reveal>
-      {[wallA, wallB].map((row, ri) => (
-        <div class={`rrow ${ri ? 'rev' : ''}`}>
-          <div class="rset">{row.map((r) => <ReviewCard r={r} />)}</div>
-        </div>
-      ))}
+    <div class="rslider" data-reveal>
+      <div class="rs-track" id="rs-track" tabindex="0" role="region" aria-label="Client reviews, scroll sideways for more" data-cursor="Drag">
+        {REVIEWS.map((r) => <ReviewCard r={r} />)}
+      </div>
+      <div class="wrap rs-nav">
+        <span class="rs-count" aria-hidden="true"><b>01</b><i>/</i>{String(REVIEWS.length).padStart(2, '0')}</span>
+        <span class="rs-bar" aria-hidden="true"><i></i></span>
+        <button type="button" class="icon-btn" data-rs="-1" aria-label="Previous reviews"><Icon name="arrowL" /></button>
+        <button type="button" class="icon-btn" data-rs="1" aria-label="Next reviews"><Icon name="arrow" /></button>
+      </div>
     </div>
   </section>
 

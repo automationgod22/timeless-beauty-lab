@@ -5,6 +5,7 @@ import Icon from '../components/Icon.astro';
 import { BOOKABLE } from '../data/content';
 import { SITE, waLink } from '../data/site';
 import { breadcrumbs } from '../data/schema';
+import { OFFER } from '../data/offer';
 import { review, byline } from '../data/reviews';
 const kind = review('pampering');
 
@@ -14,10 +15,12 @@ const groups = ['Signature facials', 'Professional peels', 'Facial massage'] as 
 const popularIds = ['glass-skin-glow-up', 'sculpt-and-glow', 'hydro-glow-freeze-facial', 'lymphatic-buccal', 'let-eye-peel'];
 const popular = popularIds.map((id) => BOOKABLE.find((b) => b.id === id)!).filter(Boolean);
 const short: Record<string, string> = { 'lymphatic-buccal': 'Lymphatic + buccal' };
-const data = { phone: SITE.phone, whatsapp: SITE.whatsapp, ig: SITE.instagramDM };
+const offerFor = BOOKABLE.find((b) => b.id === OFFER.treatment);
+const data = { phone: SITE.phone, whatsapp: SITE.whatsapp, ig: SITE.instagramDM, offer: OFFER.enabled && offerFor ? { key: OFFER.key, code: OFFER.code, percent: OFFER.percent, treatment: OFFER.treatment, name: offerFor.name } : null };
 const times = ['Morning', 'Afternoon', 'Evening', 'Any time'];
 ---
 <Base
+  noOffer
   title="Book a Facial in Jersey City | Timeless Beauty Lab"
   description="Request a facial, peel or facial massage at Timeless Beauty Lab in Jersey City. Pick a treatment and time, then send it on WhatsApp, Instagram or text."
   jsonLd={[breadcrumbs(site, crumbs)]}
@@ -57,6 +60,7 @@ const times = ['Morning', 'Afternoon', 'Evening', 'Any time'];
       </aside>
 
       <div class="booker">
+        <div class="offer-note" id="offer-note" role="status" hidden></div>
         <ol class="bsteps" aria-hidden="true">
           <li class="on">Treatment</li>
           <li>Day and time</li>

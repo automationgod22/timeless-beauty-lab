@@ -4,6 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
 import Lenis from 'lenis';
 import { initCursor } from './cursor';
+import { initOffer } from './offer';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 ScrollTrigger.config({ ignoreMobileResize: true });
@@ -139,23 +140,84 @@ if (bar) {
   if (document.readyState === 'complete') remeasure(); else addEventListener('load', remeasure, { once: true });
 }
 
-/* ---------------- client quotes: each row gets a second copy so it can drift in a seamless loop ---------------- */
-const wall = $('.rwall');
-if (wall && !reduce) {
-  const wallIO = new IntersectionObserver((entries) => {
+/* ---------------- client reviews: a sideways slider with arrows, a progress bar and mouse drag ---------------- */
+const rsTrack = $('#rs-track');
+const initSlider = (rsTrack: HTMLElement) => {
+  const slider = rsTrack.closest('.rslider')!;
+  const bar = $('.rs-bar i', slider), count = $('.rs-count b', slider);
+  const prev = $<HTMLButtonElement>('[data-rs="-1"]', slider), next = $<HTMLButtonElement>('[data-rs="1"]', slider);
+  const cards = $$('.rcard', rsTrack);
+  const step = () => (cards[0]?.offsetWidth || 320) + parseFloat(getComputedStyle(rsTrack).columnGap || '20');
+  const sync = () => {
+    const max = rsTrack.scrollWidth - rsTrack.clientWidth;
+    const p = max > 0 ? rsTrack.scrollLeft / max : 0;
+    if (bar) {
+      bar.style.width = `${Math.min(100, (rsTrack.clientWidth / rsTrack.scrollWidth) * 100).toFixed(2)}%`;
+      bar.style.transform = `translateX(${((rsTrack.scrollLeft / rsTrack.clientWidth) * 100).toFixed(2)}%)`;
+    }
+    const i = Math.min(cards.length - 1, Math.round(rsTrack.scrollLeft / step()));
+    if (count) count.textContent = String(p > 0.995 ? cards.length : i + 1).padStart(2, '0');
+    if (prev) prev.disabled = rsTrack.scrollLeft < 4;
+    if (next) next.disabled = rsTrack.scrollLeft > max - 4;
+  };
+  slider.addEventListener('click', (e) => {
+    const b = (e.target as Element).closest<HTMLElement>('[data-rs]');
+    if (b) rsTrack.scrollBy({ left: Number(b.dataset.rs) * step(), behavior: reduce ? 'auto' : 'smooth' });
+  });
+  rsTrack.addEventListener('scroll', () => requestAnimationFrame(sync), { passive: true });
+  addEventListener('resize', sync);
+  sync();
+  // drag with the mouse (touch screens swipe natively)
+  let down = false, startX = 0, startLeft = 0, moved = false;
+  rsTrack.addEventListener('pointerdown', (e) => {
+    if (e.pointerType !== 'mouse' || e.button !== 0 || (e.target as Element).closest('button, a, summary')) return;
+    down = true; moved = false; startX = e.clientX; startLeft = rsTrack.scrollLeft;
+  });
+  addEventListener('pointermove', (e) => {
+    if (!down) return;
+    const dx = e.clientX - startX;
+    if (!moved && Math.abs(dx) > 4) { moved = true; rsTrack.classList.add('dragging'); }
+    if (moved) rsTrack.scrollLeft = startLeft - dx;
+  });
+  addEventListener('pointerup', () => {
+    if (!down) return;
+    down = false;
+    if (moved) {
+      rsTrack.classList.remove('dragging');
+      // settle on the nearest card
+      const target = Math.round(rsTrack.scrollLeft / step()) * step();
+      rsTrack.scrollTo({ left: target, behavior: reduce ? 'auto' : 'smooth' });
+    }
+  });
+};
+if (rsTrack) {
+  const near = new IntersectionObserver((entries) => {
     if (!entries.some((e) => e.isIntersecting)) return;
-    wallIO.disconnect();
-    $$('.rrow', wall).forEach((row) => {
-      const copy = $('.rset', row)!.cloneNode(true) as HTMLElement;
-      copy.setAttribute('aria-hidden', 'true');
-      $$<HTMLImageElement>('img', copy).forEach((im) => { if (im.complete) im.classList.add('ld'); });
-      copy.inert = true;
-      row.appendChild(copy);
-      row.classList.add('loop');
-    });
-  }, { rootMargin: '600px 0px' });
-  wallIO.observe(wall);
+    near.disconnect();
+    initSlider(rsTrack);
+  }, { rootMargin: '400px 0px' });
+  near.observe(rsTrack);
 }
+
+/* ---------------- photo viewer for the before/after thumbnails on review cards ---------------- */
+const lb = $<HTMLDialogElement>('#lightbox');
+if (lb) {
+  const frame = $('.lb-frame', lb)!;
+  document.addEventListener('click', (e) => {
+    const t = (e.target as Element).closest<HTMLElement>('[data-lightbox]');
+    if (!t || !lb.showModal) return;
+    const im = document.createElement('img');
+    im.src = t.dataset.lightbox!;
+    im.alt = t.dataset.alt || '';
+    frame.replaceChildren(im);
+    lb.showModal();
+    lenis?.stop();
+  });
+  lb.addEventListener('click', (e) => { if (e.target === lb || (e.target as Element).closest('[data-lb-close]')) lb.close(); });
+  lb.addEventListener('close', () => lenis?.start());
+}
+
+initOffer();
 
 const endSeen = new Set<Element>();
 const endIO = new IntersectionObserver((entries) => {

@@ -4,6 +4,7 @@ import PageHero from '../../components/PageHero.astro';
 import FacialCard from '../../components/FacialCard.astro';
 import Faq from '../../components/Faq.astro';
 import CtaBand from '../../components/CtaBand.astro';
+import Quotes from '../../components/Quotes.astro';
 import Icon from '../../components/Icon.astro';
 import { FACIALS, FAQ_GENERAL, priceLabel } from '../../data/content';
 import { breadcrumbs } from '../../data/schema';
@@ -85,6 +86,8 @@ const itemList = {
       <Faq items={FAQ_GENERAL.slice(0, 5)} />
     </div>
   </section>
+
+  <Quotes ids={['best-at-this', 'worth-it', 'pampering']} tint />
 
   <CtaBand />
 </Base>

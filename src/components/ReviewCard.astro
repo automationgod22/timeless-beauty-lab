@@ -1,0 +1,27 @@
+---
+// One client quote, styled as a note: optional before/after photo, the words as written, and where they came from.
+import Pic from './Pic.astro';
+import Icon from './Icon.astro';
+import { byline, type Review } from '../data/reviews';
+interface Props { r: Review; class?: string; }
+const { r, class: cls = '' } = Astro.props;
+---
+<figure class={`rcard ${r.photo ? 'has-photo' : ''} ${cls}`}>
+  {r.photo && (
+    <div class="rc-photo">
+      <Pic name={r.photo} alt="Before and after photos from this client’s visit, before on the left" sizes="(max-width: 760px) 300px, 360px" widths={[400, 720]} still />
+      <span class="rc-tag b" aria-hidden="true">Before</span><span class="rc-tag a" aria-hidden="true">After</span>
+    </div>
+  )}
+  <blockquote><p>“{r.quote}”</p></blockquote>
+  {r.original && (
+    <details class="rc-orig">
+      <summary>{r.original.label}</summary>
+      <p lang={r.original.lang}>“{r.original.text}”</p>
+    </details>
+  )}
+  <figcaption>
+    <span class="rc-src"><Icon name="ig" /><span>{byline(r)}</span></span>
+    {r.context && <span class="rc-ctx">{r.context}</span>}
+  </figcaption>
+</figure>

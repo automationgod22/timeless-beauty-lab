@@ -5,6 +5,9 @@ import Pic from '../components/Pic.astro';
 import BeforeAfter from '../components/BeforeAfter.astro';
 import CtaBand from '../components/CtaBand.astro';
 import { BA, GALLERY } from '../data/content';
+import { REVIEWS, byline } from '../data/reviews';
+import ReviewCard from '../components/ReviewCard.astro';
+const notes = REVIEWS.filter((r) => r.shot || r.photo);
 import { breadcrumbs } from '../data/schema';
 
 const site = Astro.site!;
@@ -12,7 +15,7 @@ const crumbs: [string, string][] = [['Home', '/'], ['Results', '/results/']];
 ---
 <Base
   title="Before & After Results | Facials in Jersey City"
-  description="Real before and after photos from Timeless Beauty Lab in Jersey City: lymphatic and buccal massage, LET Eye Peel, ESABIOPEEL and sculpting results."
+  description="Real before and after photos and client messages from Timeless Beauty Lab in Jersey City: lymphatic and buccal massage, LET Eye Peel and sculpting results."
   og="results"
   jsonLd={[breadcrumbs(site, crumbs)]}
 >
@@ -57,6 +60,30 @@ const crumbs: [string, string][] = [['Home', '/'], ['Results', '/results/']];
         ))}
       </div>
       <p class="note mt-l">Every photo shows a client of Timeless Beauty Lab. Results vary from person to person, and the right plan for your skin is discussed at your consultation.</p>
+    </div>
+  </section>
+
+  <section class="sec" id="messages" aria-labelledby="messages-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <p class="eyebrow">Love notes</p>
+          <h2 id="messages-title" data-split>Straight from <em>the inbox.</em></h2>
+        </div>
+        <div class="side" data-reveal>
+          <p class="body-2">Screenshots of real messages and comments sent to Tatiana, as shared in the studio’s Instagram highlights. Nothing has been edited.</p>
+        </div>
+      </div>
+      <div class="notes">
+        {notes.map((r) => r.shot ? (
+          <figure class="note-shot" data-reveal>
+            <Pic name={r.shot} alt={`Screenshot of a client's ${r.source.toLowerCase()}: “${r.quote}”`} sizes="(max-width: 560px) 92vw, (max-width: 900px) 45vw, 30vw" widths={[480, 900]} still />
+            <figcaption>{byline(r)}{r.context ? ` · ${r.context}` : ''}</figcaption>
+          </figure>
+        ) : (
+          <div class="note-card" data-reveal><ReviewCard r={r} /></div>
+        ))}
+      </div>
     </div>
   </section>
 

@@ -1,0 +1,27 @@
+---
+// A short "kind words" band for inner pages: two or three real client quotes and a link to the originals.
+import ReviewCard from './ReviewCard.astro';
+import Icon from './Icon.astro';
+import { review } from '../data/reviews';
+import { emph } from '../utils/emph';
+interface Props { ids: string[]; title?: string; tint?: boolean; }
+const { ids, title = 'Clients, *in their own words.*', tint = false } = Astro.props;
+const id = `kind-${ids[0]}`;
+---
+<section class={`sec ${tint ? 'tint' : ''}`} aria-labelledby={id}>
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <p class="eyebrow">Kind words</p>
+        <h2 id={id} data-split set:html={emph(title)} />
+      </div>
+      <div class="side" data-reveal>
+        <p class="body-2">Real messages and comments from clients, quoted as written.</p>
+        <a class="link" href="/results/#messages"><span>See the original messages</span><Icon name="arrow" /></a>
+      </div>
+    </div>
+    <div class="qcards" data-reveal>
+      {ids.map((rid) => <ReviewCard r={review(rid)} />)}
+    </div>
+  </div>
+</section>

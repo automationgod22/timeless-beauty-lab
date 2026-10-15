@@ -10,6 +10,7 @@ import Steps from '../../components/Steps.astro';
 import Ticks from '../../components/Ticks.astro';
 import Expect from '../../components/Expect.astro';
 import CtaBand from '../../components/CtaBand.astro';
+import Quotes from '../../components/Quotes.astro';
 import { FACIALS, priceLabel, type Facial } from '../../data/content';
 import { img } from '../../data/images';
 import { waLink } from '../../data/site';
@@ -112,6 +113,8 @@ const expect = [
       </div>
     </div>
   </section>
+
+  <Quotes ids={['best-at-this', 'brand-new', 'business-meetings']} />
 
   <CtaBand title={`Ready for your *${f.name}?*`} treatment={f.slug} treatmentName={f.name} />
 </Base>

@@ -7,6 +7,7 @@ import BeforeAfter from '../components/BeforeAfter.astro';
 import Steps from '../components/Steps.astro';
 import Faq from '../components/Faq.astro';
 import CtaBand from '../components/CtaBand.astro';
+import Quotes from '../components/Quotes.astro';
 import { PEELS, PEEL_VISIT, FAQ_PEELS, BA, GALLERY, priceLabel } from '../data/content';
 import { breadcrumbs, faqPage, catalogService } from '../data/schema';
 
@@ -115,6 +116,8 @@ const description =
       <Faq items={FAQ_PEELS} />
     </div>
   </section>
+
+  <Quotes ids={['worth-it', 'business-meetings', 'brand-new']} />
 
   <CtaBand title="Ready for fresh, *renewed skin?*" text="Book a peel, or message the studio and Tatiana will recommend the right one for your skin." />
 </Base>

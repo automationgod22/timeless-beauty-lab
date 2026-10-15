@@ -5,6 +5,8 @@ import Icon from '../components/Icon.astro';
 import { BOOKABLE } from '../data/content';
 import { SITE, waLink } from '../data/site';
 import { breadcrumbs } from '../data/schema';
+import { review, byline } from '../data/reviews';
+const kind = review('pampering');
 
 const site = Astro.site!;
 const crumbs: [string, string][] = [['Home', '/'], ['Book', '/book/']];
@@ -48,6 +50,10 @@ const times = ['Morning', 'Afternoon', 'Evening', 'Any time'];
           <div><dt>Inside</dt><dd>{SITE.address.building}</dd></div>
           <div><dt>Hours</dt><dd>{SITE.hours || 'By appointment'}</dd></div>
         </dl>
+        <figure class="book-quote">
+          <blockquote><p>“{kind.short}”</p></blockquote>
+          <figcaption><Icon name="ig" /><span>{byline(kind)}</span></figcaption>
+        </figure>
       </aside>
 
       <div class="booker">

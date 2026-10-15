@@ -99,6 +99,64 @@ const onScroll = () => {
   lastY = y;
 };
 addEventListener('scroll', onScroll, { passive: true });
+/* ---------------- reading progress: a line of liquid gold with a glowing bead at its tip ----------------
+   Small dots mark where each section starts and light up as the bead passes them. */
+const bar = $('.scroll-line');
+if (bar) {
+  const tickBox = $('.sl-ticks', bar);
+  let ticks: { el: HTMLElement; at: number }[] = [];
+  let max = 1, queued = false;
+  const paint = () => {
+    queued = false;
+    const p = Math.min(1, Math.max(0, window.scrollY / max));
+    bar.style.setProperty('--p', p.toFixed(4));
+    bar.style.setProperty('--x', `${(p * bar.clientWidth).toFixed(1)}px`);
+    bar.classList.toggle('on', p > 0.003);
+    for (const t of ticks) t.el.classList.toggle('lit', p >= t.at - 0.002);
+  };
+  const measure = () => {
+    max = Math.max(1, document.documentElement.scrollHeight - innerHeight);
+    if (!tickBox) return;
+    tickBox.textContent = '';
+    ticks = [];
+    let last = -1;
+    $$('main section[aria-labelledby]').forEach((s) => {
+      const at = (s.getBoundingClientRect().top + window.scrollY) / max;
+      if (at < 0.015 || at > 0.985 || at - last < 0.02) return;
+      last = at;
+      const el = document.createElement('i');
+      el.style.left = `${(at * 100).toFixed(2)}%`;
+      tickBox.appendChild(el);
+      ticks.push({ el, at });
+    });
+  };
+  const queue = () => { if (!queued) { queued = true; requestAnimationFrame(paint); } };
+  const remeasure = () => { measure(); paint(); };
+  addEventListener('scroll', queue, { passive: true });
+  addEventListener('resize', remeasure);
+  ScrollTrigger.addEventListener('refresh', remeasure);
+  // measuring waits until the page has loaded, so it never competes with the first paint
+  if (document.readyState === 'complete') remeasure(); else addEventListener('load', remeasure, { once: true });
+}
+
+/* ---------------- client quotes: each row gets a second copy so it can drift in a seamless loop ---------------- */
+const wall = $('.rwall');
+if (wall && !reduce) {
+  const wallIO = new IntersectionObserver((entries) => {
+    if (!entries.some((e) => e.isIntersecting)) return;
+    wallIO.disconnect();
+    $$('.rrow', wall).forEach((row) => {
+      const copy = $('.rset', row)!.cloneNode(true) as HTMLElement;
+      copy.setAttribute('aria-hidden', 'true');
+      $$<HTMLImageElement>('img', copy).forEach((im) => { if (im.complete) im.classList.add('ld'); });
+      copy.inert = true;
+      row.appendChild(copy);
+      row.classList.add('loop');
+    });
+  }, { rootMargin: '600px 0px' });
+  wallIO.observe(wall);
+}
+
 const endSeen = new Set<Element>();
 const endIO = new IntersectionObserver((entries) => {
   entries.forEach((e) => (e.isIntersecting ? endSeen.add(e.target) : endSeen.delete(e.target)));
@@ -306,8 +364,6 @@ if (!reduce) {
   }
 
   /* ---------------- thin gold line that fills as you read ---------------- */
-  const line = $('.scroll-line i');
-  if (line) ScrollTrigger.create({ start: 0, end: 'max', onUpdate: (self) => gsap.set(line, { scaleX: self.progress }) });
 
   /* ---------------- stacking technology cards ---------------- */
   const cards = $$('.stack-card');
@@ -343,10 +399,11 @@ if (!reduce) {
   }
 
   /* ---------------- photos fade in once they have loaded (no hard pop-in) ---------------- */
-  $$<HTMLImageElement>('.pic img[loading="lazy"]').forEach((im) => {
-    const done = () => im.classList.add('ld');
-    if (im.complete) done(); else { im.addEventListener('load', done, { once: true }); im.addEventListener('error', done, { once: true }); }
-  });
+  // one listener for every photo, including copies added later (the looping quote rows)
+  const markLoaded = (e: Event) => { const t = e.target as HTMLElement; if (t.tagName === 'IMG' && t.closest('.pic')) t.classList.add('ld'); };
+  document.addEventListener('load', markLoaded, true);
+  document.addEventListener('error', markLoaded, true);
+  $$<HTMLImageElement>('.pic img[loading="lazy"]').forEach((im) => { if (im.complete) im.classList.add('ld'); });
 
   /* ---------------- desktop: a round magnifier over before/after photos ---------------- */
   if (fine) {

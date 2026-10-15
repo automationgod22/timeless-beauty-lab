@@ -6,6 +6,7 @@ import Icon from '../../components/Icon.astro';
 import BeforeAfter from '../../components/BeforeAfter.astro';
 import Faq from '../../components/Faq.astro';
 import CtaBand from '../../components/CtaBand.astro';
+import Quotes from '../../components/Quotes.astro';
 import { MASSAGES, BA, priceLabel } from '../../data/content';
 import { MASSAGE_PAGES } from '../../data/massage';
 import { breadcrumbs, faqPage, catalogService } from '../../data/schema';
@@ -126,6 +127,8 @@ const description =
       <Faq items={faqs} />
     </div>
   </section>
+
+  <Quotes ids={['loved-massage', 'chin', 'book-another']} />
 
   <CtaBand title="Ready to feel *the difference?*" treatment="lymphatic-buccal" treatmentName="lymphatic drainage and buccal massage" />
 </Base>

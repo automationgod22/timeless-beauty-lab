@@ -255,10 +255,10 @@ export const GALLERY: { img: string; title: string; note: string }[] = [
   { img: 'r-5', title: 'Facial sculpting massage', note: 'Contour and lift' },
   { img: 'r-8', title: 'Lymphatic drainage + buccal', note: 'Combined massage' },
   { img: 'r-9', title: 'Lymphatic drainage program', note: 'After 5 sessions' },
+  { img: 'r-11', title: 'Lymphatic drainage massage', note: 'Profile, posted Nov 2024' },
+  { img: 'r-10', title: 'Facial treatment', note: 'Posted Dec 2024' },
+  { img: 'r-12', title: 'Lymphatic drainage', note: 'Posted Nov 2024' },
 ];
-
-// Add real reviews here (from her Instagram highlight or Google). The section stays hidden until this has entries.
-export const REVIEWS: { quote: string; name: string; treatment: string }[] = [];
 
 export const priceLabel = (p?: number) => (p ? `From $${p}` : 'Price on request');
 

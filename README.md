@@ -16,7 +16,8 @@ npm run preview  # serve the production build
 | What | File |
 | --- | --- |
 | Name, phone, WhatsApp, address, hours, Instagram | `src/data/site.ts` |
-| Facials, peels, massages, prices, FAQs, results captions, reviews | `src/data/content.ts` |
+| Facials, peels, massages, prices, FAQs, results captions | `src/data/content.ts` |
+| Client quotes (home wall, page quotes, results “inbox”) | `src/data/reviews.ts` |
 | Lymphatic drainage and buccal massage pages | `src/data/massage.ts` |
 | Skin quiz questions and scoring | `src/data/quiz.ts` |
 | Colors, type, spacing, dark mode | `src/styles/global.css` |
@@ -25,7 +26,7 @@ npm run preview  # serve the production build
 
 **Prices.** Give a treatment `price: 250` and every page shows "From $250": cards, the price menu, the booking form, the quiz and the structured data Google reads. Without a price it shows "Price on request".
 
-**Reviews.** Add entries to `REVIEWS` in `content.ts` and the reviews section appears on the home page.
+**Reviews.** Real quotes from the studio's Instagram highlights live in `src/data/reviews.ts`, quoted as written. Add a `shot` (a cropped screenshot in `src/assets/img`) to show the original on the results page, or a `photo` for a before/after pair. Before launch, confirm with Tatiana that each client is happy to be quoted.
 
 **Hours.** Set `hours` in `site.ts` (for example `'Tue–Sat, 10am–7pm'`) and it shows on the site and in Google's business data.
 

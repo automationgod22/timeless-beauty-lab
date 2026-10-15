@@ -4,6 +4,7 @@ import PageHero from '../components/PageHero.astro';
 import Pic from '../components/Pic.astro';
 import Icon from '../components/Icon.astro';
 import CtaBand from '../components/CtaBand.astro';
+import Quotes from '../components/Quotes.astro';
 import { SITE } from '../data/site';
 import { BOOKABLE, TECH } from '../data/content';
 import { breadcrumbs, businessId } from '../data/schema';
@@ -114,6 +115,8 @@ const values = [
       </div>
     </div>
   </section>
+
+  <Quotes ids={['coolest-master', 'pampering', 'found-you']} title="Why clients *come back.*" />
 
   <CtaBand title={`Meet ${SITE.owner} *in person.*`} />
 </Base>

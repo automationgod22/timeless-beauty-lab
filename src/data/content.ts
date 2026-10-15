@@ -58,7 +58,7 @@ export const FACIALS: Facial[] = [
       ['Is it suitable for sensitive skin?', 'Yes. Every step is adjusted to your skin on the day, and the cryotherapy finish helps calm redness.'],
       ['Can I go back to work afterwards?', 'Absolutely. There is no downtime, just fresh, glowing skin.'],
     ],
-    seoTitle: 'Glass Skin Glow Up Facial in Jersey City | HydroFacial + Microcurrent',
+    seoTitle: 'Glass Skin Glow Up Facial in Jersey City | HydroFacial',
     seoDescription:
       'Our most requested 90-minute facial: HydroFacial, microcurrent lift, cryotherapy and serum infusion for smooth, glass-like skin. From $295 in Jersey City, NJ.',
   },
@@ -81,9 +81,9 @@ export const FACIALS: Facial[] = [
       ['Does RF skin tightening hurt?', 'No. Radiofrequency feels like a gentle, comfortable warmth.'],
       ['How often should I book it?', 'Once a month keeps the contour defined. Before an event, book it a few days ahead.'],
     ],
-    seoTitle: 'Sculpt & Glow Facial: Lymphatic Drainage, HydroFacial & RF | Jersey City',
+    seoTitle: 'Sculpt & Glow Facial in Jersey City | Lymphatic + RF',
     seoDescription:
-      'A 2-hour sculpting facial in Jersey City: 40 minutes of lymphatic drainage, HydroFacial, RF skin tightening for face and décolleté, cryotherapy and infusion. From $335.',
+      'A 2-hour sculpting facial in Jersey City: lymphatic drainage, HydroFacial, RF tightening for face and décolleté, cryotherapy and infusion. From $335.',
   },
   {
     slug: 'oxygen-sculpt-and-glow',
@@ -102,9 +102,9 @@ export const FACIALS: Facial[] = [
       ['Will I look red afterwards?', 'Usually not. Most clients leave with a fresh glow and go straight back to their day.'],
       ['Can I combine it with a peel?', 'Yes. Mention it when booking and Tatiana will plan the right combination for your skin.'],
     ],
-    seoTitle: 'Oxygen Sculpt & Glow: Carboxytherapy + Microcurrent Facial | Jersey City',
+    seoTitle: 'Oxygen Sculpt & Glow Facial in Jersey City | Microcurrent',
     seoDescription:
-      'Carboxytherapy, microcurrent and cryotherapy in one 75–90 minute facial for an instant lift, less puffiness and a radiant glow. Non-invasive facials in Jersey City, NJ.',
+      'Carboxytherapy, microcurrent and cryotherapy in one 75–90 minute facial for an instant lift, less puffiness and a radiant glow. Jersey City, NJ.',
   },
   {
     slug: 'oxygen-lymphatic-glow',
@@ -123,7 +123,7 @@ export const FACIALS: Facial[] = [
       ['How soon will I see a difference?', 'Puffiness usually reduces after the first session. A course of sessions gives longer-lasting definition.'],
       ['Should I drink more water afterwards?', 'Yes. Staying well hydrated after drainage massage helps the results.'],
     ],
-    seoTitle: 'Oxygen Lymphatic Glow: Lymphatic Drainage Facial + Carboxy | Jersey City',
+    seoTitle: 'Oxygen Lymphatic Glow Facial in Jersey City',
     seoDescription:
       'A 2-hour lymphatic drainage facial massage with carboxytherapy and cryotherapy to de-puff, sculpt and restore glow. Book in Jersey City, NJ.',
   },
@@ -144,7 +144,7 @@ export const FACIALS: Facial[] = [
       ['Is there downtime?', 'Skin may look slightly pink for a short while, then smooth and bright.'],
       ['How many sessions do I need?', 'One session gives instant smoothness. A series of sessions works best for texture and tone.'],
     ],
-    seoTitle: 'Diamond Microdermabrasion + HydroFacial in Jersey City | Deluxe Glow',
+    seoTitle: 'Diamond Microdermabrasion + HydroFacial | Jersey City',
     seoDescription:
       'Diamond microdermabrasion, HydroFacial, infusion and cryotherapy in one 90-minute facial for smoother texture, clearer pores and brighter tone. Jersey City, NJ.',
   },
@@ -166,7 +166,7 @@ export const FACIALS: Facial[] = [
       ['Can I go back to work after?', 'Absolutely. There is no downtime.'],
       ['How often can I book it?', 'Every few weeks keeps skin clear and hydrated.'],
     ],
-    seoTitle: 'Hydro Glow Freeze Facial in Jersey City | 60-Minute HydroFacial',
+    seoTitle: 'Hydro Glow Freeze Facial in Jersey City | 60-Min HydroFacial',
     seoDescription:
       'A 60-minute express HydroFacial with serum infusion and cryotherapy for clean, plump, glowing skin. The perfect first facial in Jersey City, NJ.',
   },
@@ -187,7 +187,7 @@ export const FACIALS: Facial[] = [
       ['Is it good after travel?', 'Yes. It is one of the best treatments for skin that looks tired after flights or long weeks.'],
       ['How long is the visit?', 'About 90 minutes, in a calm, private suite.'],
     ],
-    seoTitle: 'Oxygen Renewal Therapy: Oxygen Facial + Microcurrent | Jersey City',
+    seoTitle: 'Oxygen Renewal Therapy Facial in Jersey City',
     seoDescription:
       'A 90-minute oxygen facial with vacuum massage, HydroFacial, oxygen infusion, microcurrent and cryotherapy to revive tired, stressed skin. Jersey City, NJ.',
   },

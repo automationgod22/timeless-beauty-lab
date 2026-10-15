@@ -17,13 +17,13 @@ const times = ['Morning', 'Afternoon', 'Evening', 'Any time'];
 ---
 <Base
   title="Book a Facial in Jersey City | Timeless Beauty Lab"
-  description="Request an appointment for a facial, peel or facial massage at Timeless Beauty Lab in Jersey City. Choose your treatment and time, then send it on WhatsApp, Instagram or by text."
+  description="Request a facial, peel or facial massage at Timeless Beauty Lab in Jersey City. Pick a treatment and time, then send it on WhatsApp, Instagram or text."
   jsonLd={[breadcrumbs(site, crumbs)]}
 >
   <PageHero
     compact
     crumbs={crumbs}
-    eyebrow="Book a visit"
+    eyebrow="Appointment request"
     title="Book your *appointment*"
     lede="Choose your treatment and a time that suits you. Your request goes straight to Tatiana, who confirms your exact time personally."
   />
@@ -51,7 +51,7 @@ const times = ['Morning', 'Afternoon', 'Evening', 'Any time'];
       </aside>
 
       <div class="booker">
-        <ol class="bsteps" aria-label="Booking steps">
+        <ol class="bsteps" aria-hidden="true">
           <li class="on">Treatment</li>
           <li>Day and time</li>
           <li>Your details</li>
@@ -82,7 +82,7 @@ const times = ['Morning', 'Afternoon', 'Evening', 'Any time'];
               </div>
             </div>
             <p class="err" hidden>Please choose a treatment, or pick “Not sure yet”.</p>
-            <div class="bnav"><span></span><button type="button" class="btn btn-primary" data-next><span>Continue</span><Icon name="arrow" /></button></div>
+            <div class="bnav"><span></span><button type="submit" class="btn btn-primary" data-next><span>Continue</span><Icon name="arrow" /></button></div>
           </div>
 
           <div class="bstep" data-step="2" hidden>
@@ -101,14 +101,14 @@ const times = ['Morning', 'Afternoon', 'Evening', 'Any time'];
             </fieldset>
             <div class="bnav">
               <button type="button" class="link" data-prev><Icon name="arrowL" /><span>Back</span></button>
-              <button type="button" class="btn btn-primary" data-next><span>Continue</span><Icon name="arrow" /></button>
+              <button type="submit" class="btn btn-primary" data-next><span>Continue</span><Icon name="arrow" /></button>
             </div>
           </div>
 
           <div class="bstep" data-step="3" hidden>
             <h3 tabindex="-1">Your details</h3>
             <div class="two">
-              <div class="field"><label for="b-name">Name</label><input id="b-name" name="name" autocomplete="name" required /></div>
+              <div class="field"><label for="b-name">Name</label><input id="b-name" name="name" type="text" autocomplete="name" required /></div>
               <div class="field"><label for="b-phone">Phone <span>(optional)</span></label><input id="b-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" /></div>
             </div>
             <div class="field">

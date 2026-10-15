@@ -97,7 +97,7 @@ const waBook = waLink("Hi! I'd like to book an appointment at Timeless Beauty La
       </div>
     </div>
   </header>
-  <div class="mmenu" id="mmenu" aria-hidden="true">
+  <div class="mmenu" id="mmenu" inert>
     <ul>
       <li><a class="big" href="/">Home</a></li>
       {nav.map(([label, href]) => <li><a class="big" href={href}>{label === 'Massage' ? 'Facial massage' : label}</a></li>)}
@@ -157,6 +157,8 @@ const waBook = waLink("Hi! I'd like to book an appointment at Timeless Beauty La
     <a class="icon-btn" href={waBook} target="_blank" rel="noopener" aria-label="Chat on WhatsApp"><Icon name="chat" /></a>
     <a class="icon-btn" href={SITE.instagramDM} target="_blank" rel="noopener" aria-label="Message on Instagram"><Icon name="ig" /></a>
   </div>
+  <a class="fab" id="fab" href="/book/" data-magnetic aria-label="Book a visit"><i aria-hidden="true"></i><span>Book a visit</span></a>
+  <div class="grain" aria-hidden="true"></div>
   <canvas class="cursor-trail" id="cursor-trail" aria-hidden="true"></canvas>
   <div class="cursor" id="cursor" aria-hidden="true">
     <svg class="dropper" viewBox="0 0 32 32">

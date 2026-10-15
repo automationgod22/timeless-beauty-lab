@@ -10,7 +10,7 @@ const site = Astro.site!;
 const crumbs: [string, string][] = [['Home', '/'], ['FAQ', '/faq/']];
 ---
 <Base
-  title="FAQ | Facials, Peels & Facial Massage | Timeless Beauty Lab, Jersey City"
+  title="FAQ | Facials, Peels & Facial Massage in Jersey City"
   description="Answers about downtime, preparation, peels, how often to come and how to book at Timeless Beauty Lab, a private facial studio in Jersey City, NJ."
   jsonLd={[faqPage([...FAQ_GENERAL, ...FAQ_PEELS]), breadcrumbs(site, crumbs)]}
 >

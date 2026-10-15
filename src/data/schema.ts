@@ -33,6 +33,7 @@ export const business = (site: URL) => ({
   address,
   areaServed: SITE.areaServed.map((name) => ({ '@type': 'City', name })),
   sameAs: [SITE.instagram],
+  hasMap: SITE.mapsUrl,
   founder: { '@type': 'Person', name: SITE.owner, jobTitle: SITE.ownerTitle },
   ...(SITE.hours ? { openingHours: SITE.hours } : {}),
   hasOfferCatalog: {

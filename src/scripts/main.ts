@@ -82,16 +82,30 @@ document.addEventListener('click', (e) => {
 /* ---------------- header, menu, mobile bar ---------------- */
 const head = $('#head');
 const mbar = $('#mbar');
+const fab = $('#fab');
+let nearEnd = false;
+const onBookPage = location.pathname.replace(/index\.html$/, '').endsWith('/book/');
 let lastY = 0;
 const onScroll = () => {
   const y = window.scrollY;
   head?.classList.toggle('scrolled', y > 10);
-  head?.classList.toggle('away', y > 600 && y > lastY + 2 && !document.body.classList.contains('menu-open'));
-  if (y < lastY - 2) head?.classList.remove('away');
+  // the header slides away while reading down and returns as soon as the visitor scrolls up
+  // (small easing steps at the end of a scroll no longer flick it back in)
+  if (y > 600 && y > lastY + 2 && !document.body.classList.contains('menu-open')) head?.classList.add('away');
+  else if (y < lastY - 2 || y <= 600) head?.classList.remove('away');
   mbar?.classList.toggle('show', y > 480);
+  // desktop: a small booking pill appears once the header (with its Book button) has slid away
+  fab?.classList.toggle('show', !onBookPage && !nearEnd && y > innerHeight * 0.9 && !!head?.classList.contains('away'));
   lastY = y;
 };
 addEventListener('scroll', onScroll, { passive: true });
+const endSeen = new Set<Element>();
+const endIO = new IntersectionObserver((entries) => {
+  entries.forEach((e) => (e.isIntersecting ? endSeen.add(e.target) : endSeen.delete(e.target)));
+  nearEnd = endSeen.size > 0;
+  onScroll();
+});
+$$('.cta, .site-foot').forEach((el) => endIO.observe(el));
 onScroll();
 
 const menuBtn = $('#menu-btn');
@@ -99,7 +113,7 @@ const menu = $('#mmenu');
 const setMenu = (open: boolean) => {
   document.body.classList.toggle('menu-open', open);
   menuBtn?.setAttribute('aria-expanded', String(open));
-  menu?.setAttribute('aria-hidden', String(!open));
+  menu?.toggleAttribute('inert', !open);
   const label = $('#menu-label');
   if (label) label.textContent = open ? 'Close' : 'Menu';
   if (open) lenis?.stop(); else lenis?.start();
@@ -168,8 +182,7 @@ if (!reduce) {
   /* ---------------- statement: words light up while scrolling ---------------- */
   $$('[data-words]').forEach((el) => {
     const split = SplitText.create(el, { type: 'words', wordsClass: 'w', tag: 'span', aria: 'none' });
-    gsap.set(split.words, { opacity: 0.16 });
-    gsap.to(split.words, { opacity: 1, stagger: 0.12, ease: 'none', scrollTrigger: { trigger: el, start: 'top 82%', end: 'bottom 48%', scrub: true } });
+    gsap.fromTo(split.words, { opacity: 0.16 }, { opacity: 1, stagger: 0.12, ease: 'none', immediateRender: false, scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom 50%', scrub: true } });
   });
 
   /* ---------------- hero wordmark ---------------- */
@@ -327,6 +340,38 @@ if (!reduce) {
       tl.fromTo(pic, from, { ...to, duration: 0.65 }, 0);
       if (media) tl.fromTo(media, { scale: 1.24 }, { scale: 1, ease: 'none', duration: 1 }, 0);
     });
+  }
+
+  /* ---------------- photos fade in once they have loaded (no hard pop-in) ---------------- */
+  $$<HTMLImageElement>('.pic img[loading="lazy"]').forEach((im) => {
+    const done = () => im.classList.add('ld');
+    if (im.complete) done(); else { im.addEventListener('load', done, { once: true }); im.addEventListener('error', done, { once: true }); }
+  });
+
+  /* ---------------- desktop: a round magnifier over before/after photos ---------------- */
+  if (fine) {
+    const shots = $$<HTMLElement>('.rgal .pic');
+    if (shots.length) {
+      const lens = document.createElement('div');
+      lens.className = 'lens';
+      lens.setAttribute('aria-hidden', 'true');
+      document.body.appendChild(lens);
+      const Z = 2.4, L = 190;
+      shots.forEach((pic) => {
+        const im = $<HTMLImageElement>('img', pic);
+        if (!im) return;
+        const best = () => (im.srcset ? im.srcset.split(',').pop()!.trim().split(' ')[0] : im.currentSrc || im.src);
+        pic.addEventListener('pointerenter', () => { lens.style.backgroundImage = `url("${best()}")`; lens.classList.add('on'); });
+        pic.addEventListener('pointerleave', () => lens.classList.remove('on'));
+        pic.addEventListener('pointermove', (e) => {
+          const r = im.getBoundingClientRect();
+          const fx = (e.clientX - r.left) / r.width, fy = (e.clientY - r.top) / r.height;
+          lens.style.transform = `translate3d(${e.clientX - L / 2}px, ${e.clientY - L / 2}px, 0)`;
+          lens.style.backgroundSize = `${r.width * Z}px ${r.height * Z}px`;
+          lens.style.backgroundPosition = `${L / 2 - fx * r.width * Z}px ${L / 2 - fy * r.height * Z}px`;
+        });
+      });
+    }
   }
 
   const igGrid = $('.iggrid');

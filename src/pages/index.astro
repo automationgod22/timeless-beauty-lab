@@ -26,8 +26,8 @@ const baHome = BA.filter((b) => b.n === 1 || b.n === 3);
 const ig = ['ig-1', 'ig-4', 'ig-5', 'ig-6', 'ig-3', 'hero'];
 ---
 <Base
-  title="Timeless Beauty Lab | Advanced Facials & Peels in Jersey City, NJ"
-  description="Advanced facials, professional peels and sculpting facial massage by licensed cosmetologist Tatiana, in a private Jersey City suite. HydroFacial, microcurrent, RF and more."
+  title="Timeless Beauty Lab | Facials & Peels in Jersey City, NJ"
+  description="Advanced facials, peels and sculpting facial massage by licensed cosmetologist Tatiana in a private Jersey City suite. HydroFacial, microcurrent, RF and more."
   jsonLd={[business(site), website]}
   preloadImage="/video/hero-poster.webp"
 >
@@ -109,7 +109,7 @@ const ig = ['ig-1', 'ig-4', 'ig-5', 'ig-6', 'ig-3', 'hero'];
 
   <!-- Signature facials: horizontal rail -->
   <section class="hscroll" data-hscroll aria-labelledby="facials-title">
-    <p class="h-ghost" aria-hidden="true">Signature rituals</p>
+    <div class="h-ghost" aria-hidden="true" data-word="Signature rituals"></div>
     <div class="h-viewport">
       <div class="h-track">
         <div class="h-intro">
@@ -315,7 +315,7 @@ const ig = ['ig-1', 'ig-4', 'ig-5', 'ig-6', 'ig-3', 'hero'];
           </dl>
           <div class="btns">
             <a class="btn btn-primary" href={SITE.mapsUrl} target="_blank" rel="noopener"><Icon name="pin" /><span>Get directions</span></a>
-            <a class="link" href={`tel:${SITE.phone}`}><Icon name="phone" /><span>Call or text</span></a>
+            <a class="link" href={`tel:${SITE.phone}`}><Icon name="phone" /><span>Call&nbsp;or&nbsp;text</span></a>
           </div>
         </div>
       </div>

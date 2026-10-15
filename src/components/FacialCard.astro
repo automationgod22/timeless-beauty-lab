@@ -17,7 +17,8 @@ const includes = f.steps.map((s) => s.name).join(', ');
   </Pic>
   <h3>{f.name}</h3>
   <p>{f.tagline}</p>
-  <ul class="fc-tech" aria-label={`Includes ${includes}`}>
+  <span class="sr-only">Includes {includes}.</span>
+  <ul class="fc-tech" aria-hidden="true">
     {f.steps.map((s) => <li title={s.name}><Icon name={s.icon} /></li>)}
   </ul>
   <div class="meta">

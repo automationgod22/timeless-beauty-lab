@@ -339,7 +339,6 @@ h4 { font-size: 21px; line-height: 1.2; letter-spacing: -0.01em; }
 /* ---------- statement ---------- */
 .statement p:not(.eyebrow) { font-family: var(--font-d); font-weight: 340; font-size: clamp(31px, 4.3vw, 68px); line-height: 1.12; letter-spacing: -0.03em; color: var(--ink); max-width: 18.5em; text-wrap: pretty; }
 .statement .w { opacity: 1; }
-.motion .statement .w { opacity: 0.16; }
 .statement .gold { color: var(--gold-ink); }
 
 /* ---------- facial cards ---------- */
@@ -368,6 +367,8 @@ h4 { font-size: 21px; line-height: 1.2; letter-spacing: -0.01em; }
 /* ---------- signature facials: pinned horizontal rail ---------- */
 .hscroll { position: relative; overflow: hidden; padding-block: clamp(84px, 10vw, 150px); }
 .h-ghost { position: absolute; z-index: 0; left: 0; bottom: -0.1em; margin: 0; font-family: var(--font-d); font-style: italic; font-weight: 320; font-size: clamp(110px, 17vw, 270px); line-height: 0.8; letter-spacing: -0.04em; white-space: nowrap; color: var(--bg-2); pointer-events: none; user-select: none; }
+/* drawn from a pseudo-element: purely decorative, tone-on-tone type */
+.h-ghost::before { content: attr(data-word); }
 .h-viewport, .h-progress { position: relative; z-index: 1; }
 .h-track { display: flex; align-items: center; gap: clamp(20px, 2.2vw, 36px); width: max-content; padding-inline: var(--gutter); }
 .h-intro { width: min(480px, 37vw); flex: none; display: grid; align-content: center; gap: 22px; padding-right: clamp(16px, 3.5vw, 64px); }
@@ -685,11 +686,14 @@ html.has-cursor :is(input:not([type=range]):not([type=radio]):not([type=checkbox
 
 /* ---------- page transitions ---------- */
 @view-transition { navigation: auto; }
-::view-transition-old(root) { animation: 0.32s ease both vt-out; }
-::view-transition-new(root) { animation: 0.6s var(--ease) both vt-in; }
+/* changing page: the next page rises in through an arch while the current one settles back */
+::view-transition-old(root) { animation: 0.95s var(--ease-io) both page-out; }
+::view-transition-new(root) { animation: 0.95s var(--ease-io) both arch-in; }
+@keyframes page-out { to { opacity: 0.35; scale: 0.965; } }
+@keyframes arch-in { from { clip-path: inset(100% 0% 0% 0% round 50vw 50vw 0 0); } to { clip-path: inset(0% 0% 0% 0% round 0 0 0 0); } }
 @keyframes vt-out { to { opacity: 0; } }
 @keyframes vt-in { from { opacity: 0; transform: translateY(16px); } }
-::view-transition-group(*) { animation-duration: 0.7s; animation-timing-function: var(--ease); }
+::view-transition-group(*) { animation-duration: 0.95s; animation-timing-function: var(--ease-io); }
 :root.theme-switch::view-transition-old(root), :root.theme-switch::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
 
 @media (prefers-reduced-motion: reduce) {
@@ -877,3 +881,34 @@ a.chip-s:hover { background: var(--bg-3); }
 .motion .pic.rv.in { clip-path: inset(0% 0% 0% 0% round 0px); }
 .motion .pic.rv.in .pic-in, .motion .pic.rv.in > video { transform: none; }
 .motion .pic.rv[data-parallax].in .pic-in { transform: scale(1.14); }
+
+/* phones: shorter hero photo on treatment pages so the title shows on the first screen */
+@media (max-width: 900px) { .detail .media .pic { aspect-ratio: 5 / 4; } }
+
+/* ---------- floating booking pill (desktop) ---------- */
+.fab { position: fixed; right: calc(28px + env(safe-area-inset-right, 0px)); bottom: calc(28px + env(safe-area-inset-bottom, 0px)); z-index: 58; display: inline-flex; align-items: center; gap: 12px; min-height: 54px; padding: 0 26px 0 20px; border-radius: 999px; background: var(--btn-bg); color: var(--btn-ink); font-weight: 600; font-size: 14.5px; letter-spacing: 0.02em; text-decoration: none; box-shadow: 0 18px 40px -16px rgba(21, 17, 13, 0.45); opacity: 0; translate: 0 24px; pointer-events: none; transition: opacity 0.5s var(--ease), translate 0.7s var(--ease), background-color 0.4s; }
+.fab.show { opacity: 1; translate: 0 0; pointer-events: auto; }
+.fab:hover { background: var(--btn-hover); }
+.fab i { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 0 0 var(--gold); animation: pulse 2.4s ease-out infinite; }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(212, 180, 124, 0.7); } 70%, 100% { box-shadow: 0 0 0 10px rgba(212, 180, 124, 0); } }
+@media (max-width: 760px) { .fab { display: none; } }
+
+/* ---------- photo fade-in, magnifier, grain, scrollbar ---------- */
+.motion .pic img[loading='lazy']:not(.ld) { opacity: 0; }
+.motion .pic img[loading='lazy'] { transition: opacity 0.9s var(--ease); }
+.lens { position: fixed; left: 0; top: 0; z-index: 89; width: 190px; height: 190px; border-radius: 50%; pointer-events: none; background-color: var(--bg-3); background-repeat: no-repeat; border: 3px solid var(--surface); box-shadow: 0 24px 60px -18px rgba(21, 17, 13, 0.5), 0 0 0 1px var(--line-2); opacity: 0; scale: 0.6; transition: opacity 0.35s var(--ease), scale 0.5s var(--ease); }
+.lens.on { opacity: 1; scale: 1; }
+.has-cursor .rgal .pic { cursor: zoom-in; }
+.fine-only { display: none; }
+@media (pointer: fine) { .fine-only { display: inline; } }
+.grain { position: fixed; inset: 0; z-index: 86; pointer-events: none; opacity: 0.035; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+:root[data-mode='dark'] .grain { opacity: 0.05; filter: invert(1); }
+@media (pointer: coarse) { .grain { display: none; } }
+@media (pointer: fine) {
+  html { scrollbar-width: thin; scrollbar-color: var(--line-2) var(--bg); }
+  ::-webkit-scrollbar { width: 11px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--line-2); border-radius: 11px; border: 3px solid var(--bg); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+}
+@media (prefers-reduced-motion: reduce) { .fab i { animation: none; } }

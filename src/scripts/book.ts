@@ -129,8 +129,7 @@ export function initBooking() {
     const t = e.target as HTMLElement;
     const pick = t.closest<HTMLElement>('[data-pick]');
     const sendLink = t.closest<HTMLElement>('[data-send]');
-    if (t.closest('[data-next]')) { if (valid(cur)) go(cur + 1); }
-    else if (t.closest('[data-prev]')) go(cur - 1);
+    if (t.closest('[data-prev]')) go(cur - 1);
     else if (pick) { sel.value = pick.dataset.pick!; valid(0); update(); }
     else if (sendLink) {
       if (!valid(2)) { e.preventDefault(); return; }
@@ -141,7 +140,13 @@ export function initBooking() {
       }
     }
   });
-  form.addEventListener('submit', (e) => e.preventDefault());
+  // "Continue" buttons submit the form, so Enter in a field moves on too; the last step hands over to WhatsApp
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!valid(cur)) return;
+    if (cur < steps.length - 1) go(cur + 1);
+    else { update(); links.wa?.focus(); }
+  });
   const clearErrors = () => {
     if (sel.value) steps[0].querySelector<HTMLElement>('.err')!.hidden = true;
     if (val('name')) steps[2].querySelector<HTMLElement>('.err')!.hidden = true;

@@ -48,7 +48,7 @@ export const MASSAGE_PAGES: MassagePage[] = [
       ['How long do the results last?', 'The first de-puffing effect lasts a few days. A regular program, good hydration and sleep keep the contour defined for longer.'],
       ['Is it right for everyone?', 'If you are pregnant, have an active infection, a heart or kidney condition or a clotting disorder, check with your doctor first and mention it when you book.'],
     ],
-    seoTitle: 'Lymphatic Drainage Facial Massage in Jersey City | Timeless Beauty Lab',
+    seoTitle: 'Lymphatic Drainage Facial Massage in Jersey City',
     seoDescription:
       'Manual lymphatic drainage facial massage in Jersey City to reduce puffiness, release tension and define your contour. Single sessions and 5-session programs.',
   },

@@ -7,7 +7,7 @@ export const SITE = {
   ownerTitle: 'Licensed cosmetologist',
   tagline: 'Advanced facials, professional peels and facial sculpting in Jersey City, NJ.',
   phone: '+15513750997',
-  phoneDisplay: '(551) 375-0997',
+  phoneDisplay: '(551)\u00a0375\u20110997', // non-breaking, so the number never splits across lines
   whatsapp: '15513750997', // confirm this number is on WhatsApp
   instagram: 'https://www.instagram.com/timeless_beauty_lab/',
   instagramHandle: '@timeless_beauty_lab',
